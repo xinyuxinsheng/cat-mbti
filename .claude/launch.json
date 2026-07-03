@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cat-mbti",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "/Users/chenzhiteng/Claude/cat-mbti"],
+      "port": 8765
+    }
+  ]
+}

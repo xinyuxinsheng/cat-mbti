@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>喵格测试 · 猫咪MBTI性格测试</title>
+  <meta name="description" content="24道题发现你家猫主子的隐藏性格，16种猫咪人格类型等你解锁！">
+  <meta name="theme-color" content="#fdf3e0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app" id="app">
+
+    <!-- === LANDING === -->
+    <div class="view active" id="view-landing">
+      <div class="floaties" aria-hidden="true">
+        <span style="top:4%;left:6%">🐟</span>
+        <span style="top:10%;right:8%">🧶</span>
+        <span style="top:30%;left:2%">🐾</span>
+        <span style="top:36%;right:3%">🥫</span>
+        <span style="top:62%;left:4%">🍤</span>
+        <span style="top:70%;right:6%">🐭</span>
+      </div>
+      <div class="landing">
+        <div class="landing-cat" id="landing-cat"></div>
+        <div><span class="title-chip">MEOW-BTI · 喵格研究所</span></div>
+        <h1>喵格<span class="accent">测试</span></h1>
+        <p class="subtitle">24道题，发现你家猫主子的隐藏性格</p>
+        <div class="landing-form">
+          <div class="input-group">
+            <label for="cat-name">猫咪名字 *</label>
+            <input type="text" id="cat-name" placeholder="输入你家主子的名字" maxlength="12" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="cat-color">毛色（可选）</label>
+            <select id="cat-color">
+              <option value="">请选择</option>
+              <option value="orange">橘猫 🟠</option>
+              <option value="black">黑猫 ⚫</option>
+              <option value="white">白猫 ⚪</option>
+              <option value="gray">灰猫 🩶</option>
+              <option value="calico">三花 🎨</option>
+              <option value="tabby">虎斑 🐯</option>
+              <option value="tuxedo">奶牛 🐄</option>
+              <option value="siamese">暹罗 🏔️</option>
+              <option value="other">其他</option>
+            </select>
+          </div>
+          <button class="btn-primary" id="btn-start">开始测试 🐾</button>
+        </div>
+      </div>
+      <div class="footer">
+        基于猫咪行为学研究 · 仅供娱乐参考
+      </div>
+    </div>
+
+    <!-- === TEST === -->
+    <div class="view" id="view-test">
+      <div class="test-header">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+          <span class="progress-cat" id="progress-cat">🐈</span>
+        </div>
+        <div class="progress-text" id="progress-text">第 1 / 24 题</div>
+      </div>
+      <div class="question-card">
+        <div class="question-text" id="question-text"></div>
+        <div class="options" id="options"></div>
+      </div>
+      <div class="test-nav">
+        <button class="btn-ghost" id="btn-prev">← 上一题</button>
+        <button class="btn-primary" id="btn-next" disabled>下一题 →</button>
+      </div>
+    </div>
+
+    <!-- === RESULT === -->
+    <div class="view" id="view-result">
+      <div class="result">
+        <div class="result-hero">
+          <div class="result-cat-svg" id="result-cat-svg"></div>
+          <div class="result-type-name" id="result-type-name"></div>
+          <div class="result-type-code" id="result-type-code"></div>
+          <div class="result-group-badge" id="result-group-badge"></div>
+          <div class="result-tags" id="result-tags"></div>
+        </div>
+
+        <div class="result-section">
+          <h3>📖 <span id="result-cat-name-display"></span>的性格</h3>
+          <div class="result-desc" id="result-desc"></div>
+        </div>
+
+        <div class="result-section">
+          <h3>🐾 标志语录</h3>
+          <ul class="quotes-list" id="result-quotes"></ul>
+        </div>
+
+        <div class="result-section">
+          <h3>📊 维度分析</h3>
+          <div class="dim-bars" id="dim-bars"></div>
+        </div>
+
+        <div class="result-section">
+          <h3>✨ 能力画像</h3>
+          <div class="trait-row">
+            <div class="trait-card good">
+              <h4>优点</h4>
+              <div class="trait-items" id="result-strengths"></div>
+            </div>
+            <div class="trait-card bad">
+              <h4>缺点</h4>
+              <div class="trait-items" id="result-weaknesses"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-section">
+          <h3>🤝 猫咪社交</h3>
+          <div class="match-row">
+            <div class="match-card">
+              <h4>🧡 最佳拍档</h4>
+              <div class="match-items" id="result-best-match"></div>
+            </div>
+            <div class="match-card">
+              <h4>⚡ 冤家对手</h4>
+              <div class="match-items" id="result-challenging"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-primary" id="btn-poster">生成分享海报 📸</button>
+          <button class="btn-secondary" id="btn-retest">重新测试 🔄</button>
+        </div>
+
+        <div class="explore-section">
+          <h3>🔍 探索全部 16 种喵格</h3>
+          <div class="explore-grid" id="explore-grid"></div>
+        </div>
+      </div>
+      <div class="footer">
+        喵格测试 · 基于猫咪行为学研究 · 仅供娱乐参考
+      </div>
+    </div>
+  </div>
+
+  <!-- POSTER MODAL -->
+  <div class="poster-modal" id="poster-modal">
+    <div class="poster-inner">
+      <button class="poster-close" id="poster-close">✕</button>
+      <h3>分享海报</h3>
+      <div class="poster-canvas-wrap">
+        <canvas id="poster-canvas"></canvas>
+      </div>
+      <div class="poster-actions">
+        <button class="btn-primary" id="btn-save-poster">保存图片 💾</button>
+      </div>
+      <p style="font-size:12px;color:#9c8168;margin-top:10px">长按图片可保存到相册</p>
+    </div>
+  </div>
+
+  <!-- TYPE DETAIL MODAL -->
+  <div class="type-modal" id="type-modal">
+    <div class="type-modal-inner" id="type-modal-inner"></div>
+  </div>
+
+  <script src="cats.js"></script>
+  <script src="app.js"></script>
+
+  <!-- Landing page cat SVG -->
+  <script>
+    document.getElementById('landing-cat').innerHTML = `
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#46342a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="100" cy="90" rx="45" ry="38" fill="#fffdf8"/>
+          <path d="M62 74 L48 38 L76 62" fill="#fffdf8"/>
+          <path d="M138 74 L152 38 L124 62" fill="#fffdf8"/>
+          <path d="M60 68 L50 42 L74 58" stroke="#ffb3c1" fill="#ffb3c1" opacity="0.5"/>
+          <path d="M140 68 L150 42 L126 58" stroke="#ffb3c1" fill="#ffb3c1" opacity="0.5"/>
+          <circle cx="82" cy="85" r="8" fill="white"/>
+          <circle cx="118" cy="85" r="8" fill="white"/>
+          <circle cx="84" cy="84" r="4.5" fill="#46342a"/>
+          <circle cx="120" cy="84" r="4.5" fill="#46342a"/>
+          <circle cx="86" cy="82" r="2" fill="white"/>
+          <circle cx="122" cy="82" r="2" fill="white"/>
+          <path d="M96 98 L100 102 L104 98" fill="#ff9db5"/>
+          <path d="M100 102 L100 105"/>
+          <path d="M94 105 Q100 110 106 105"/>
+          <line x1="62" y1="94" x2="78" y2="94"/>
+          <line x1="62" y1="99" x2="76" y2="99"/>
+          <line x1="138" y1="94" x2="122" y2="94"/>
+          <line x1="138" y1="99" x2="124" y2="99"/>
+          <path d="M65 120 Q58 158 78 172 Q100 182 122 172 Q142 158 135 120" fill="#fffdf8"/>
+          <ellipse cx="82" cy="174" rx="10" ry="7" fill="#fffdf8"/>
+          <ellipse cx="118" cy="174" rx="10" ry="7" fill="#fffdf8"/>
+          <path d="M135 150 Q162 140 165 118 Q166 108 158 105" stroke-width="3"/>
+          <text x="100" y="155" font-size="16" fill="#f2762e" text-anchor="middle" stroke="none" font-weight="bold">?</text>
+        </g>
+      </svg>`;
+  </script>
+</body>
+</html>
