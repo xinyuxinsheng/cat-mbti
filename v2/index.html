@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>喵格研究所 · 猫咪人格档案</title>
+  <meta name="description" content="24 项行为观察，16 种喵格判定，给你家主子发一张官方认证的「猫咪人格证」。">
+  <meta name="theme-color" content="#f4ead2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- ============ 受理大厅 ============ -->
+    <div class="view active" id="view-landing">
+
+      <header class="bureau-head">
+        <div class="bureau-emblem">🐾</div>
+        <div class="bureau-name">喵格研究所</div>
+        <div class="bureau-sub">MEOW PERSONALITY BUREAU · EST. 2026</div>
+        <div class="bureau-rule"></div>
+      </header>
+
+      <div class="folder">
+        <div class="folder-tab">受理窗口 · No.1</div>
+        <div class="folder-body">
+          <h1>给你家主子<br>建一份<span class="hl">人格档案</span></h1>
+          <p class="lead">24 项行为观察 → 16 种喵格判定<br>核发一张盖章认证的《猫咪人格证》</p>
+
+          <div class="form-row">
+            <label>猫咪姓名</label>
+            <input type="text" id="cat-name" placeholder="请如实填写" maxlength="12" autocomplete="off">
+          </div>
+          <div class="form-row">
+            <label>品种花色</label>
+            <select id="cat-color">
+              <option value="">未登记</option>
+              <option value="orange">橘猫</option>
+              <option value="lihua">狸花猫</option>
+              <option value="calico">三花猫</option>
+              <option value="tuxedo">奶牛猫</option>
+              <option value="black">玄猫（黑猫）</option>
+              <option value="white">白猫</option>
+              <option value="bs-blue">英短蓝猫 / 蓝白</option>
+              <option value="gradient">金渐层 / 银渐层</option>
+              <option value="as">美短</option>
+              <option value="ragdoll">布偶猫</option>
+              <option value="siamese">暹罗猫</option>
+              <option value="garfield">加菲（异国短毛）</option>
+              <option value="devon">德文 / 无毛猫</option>
+              <option value="other">其他</option>
+            </select>
+          </div>
+
+          <button class="stamp-btn" id="btn-start">开 始 建 档</button>
+          <p class="tiny">档案仅存于本机设备 · 观察项参考「Feline Five」猫科人格研究</p>
+        </div>
+      </div>
+
+      <section class="wall">
+        <h2>—— 在档喵格 · 共 16 类 ——</h2>
+        <p class="wall-sub">点击档案照可调阅简况</p>
+        <div class="wall-grid" id="wall-grid"></div>
+      </section>
+
+      <footer class="foot">喵格研究所 · 鉴定结果偏娱乐，请配合猫条食用</footer>
+    </div>
+
+    <!-- ============ 行为观察（答题） ============ -->
+    <div class="view" id="view-test">
+      <div class="test-head">
+        <span class="file-label">行为观察记录</span>
+        <span class="test-no" id="test-no">NO.01 / 24</span>
+      </div>
+      <div class="ruler"><div class="ruler-fill" id="ruler-fill"></div></div>
+
+      <div class="q-paper" id="q-paper">
+        <div class="q-meta">观察对象：<b id="q-cat"></b> <span class="q-clip">📎</span></div>
+        <div class="q-text" id="question-text"></div>
+        <div class="options" id="options"></div>
+        <div class="q-stamp" id="q-stamp">已记录</div>
+      </div>
+
+      <button class="ghost" id="btn-prev">← 修改上一条记录</button>
+    </div>
+
+    <!-- ============ 档案核发（结果） ============ -->
+    <div class="view" id="view-result">
+
+      <div class="issue-line">▼ 档案审核通过 · 现予核发 ▼</div>
+
+      <!-- 猫咪人格证 -->
+      <div class="id-card" id="id-card">
+        <div class="idc-head">
+          <span class="idc-title">猫咪人格证</span>
+          <span class="idc-en">MEOW PERSONALITY CERTIFICATE</span>
+        </div>
+        <div class="idc-body">
+          <div class="idc-photo">
+            <div class="idc-svg" id="idc-svg"></div>
+            <div class="idc-photo-label">档案照</div>
+          </div>
+          <div class="idc-fields">
+            <div class="idc-row"><span class="k">姓 名</span><b id="idc-name"></b></div>
+            <div class="idc-row"><span class="k">喵 格</span><b class="idc-type" id="idc-type"></b></div>
+            <div class="idc-row"><span class="k">代 码</span><b id="idc-code" class="mono"></b></div>
+            <div class="idc-row"><span class="k">派 系</span><b id="idc-group"></b></div>
+            <div class="idc-row"><span class="k">登 记</span><b id="idc-date" class="mono"></b></div>
+          </div>
+          <div class="idc-seal">喵格<br>认证</div>
+        </div>
+        <div class="idc-tags" id="idc-tags"></div>
+        <div class="idc-foot">
+          <div class="barcode"></div>
+          <span class="idc-no mono" id="idc-no"></span>
+        </div>
+      </div>
+      <p class="save-hint">📸 长按截图保存人格证</p>
+
+      <!-- 档案正文 -->
+      <section class="dossier">
+        <div class="d-sec">
+          <h3><span class="d-tab">壹</span>鉴定结论</h3>
+          <p class="d-text" id="r-desc"></p>
+        </div>
+        <div class="d-sec">
+          <h3><span class="d-tab">贰</span>行为记录摘录</h3>
+          <ul class="d-quotes" id="r-quotes"></ul>
+        </div>
+        <div class="d-sec">
+          <h3><span class="d-tab">叁</span>评定量表</h3>
+          <div class="d-dims" id="dim-bars"></div>
+        </div>
+        <div class="d-sec">
+          <h3><span class="d-tab">肆</span>综合评价</h3>
+          <div class="d-split">
+            <div class="d-good"><h4>✓ 优势项</h4><p id="r-str"></p></div>
+            <div class="d-bad"><h4>△ 风险项</h4><p id="r-weak"></p></div>
+          </div>
+        </div>
+        <div class="d-sec">
+          <h3><span class="d-tab">伍</span>相性备注</h3>
+          <p class="d-text" id="r-match"></p>
+        </div>
+
+        <!-- 机密档案（付费位） -->
+        <div class="d-sec d-locked">
+          <div class="locked-band">机 密 · CLASSIFIED</div>
+          <h3>🔒 深度档案 · 待调阅</h3>
+          <ul class="locked-list">
+            <li>▪ 行为翻译词典——每个迷惑行为的档案注解</li>
+            <li>▪ 相处红黑榜——对它的禁忌事项清单</li>
+            <li>▪ 喂养环境建议——按喵格布置的生活方案</li>
+            <li>▪ AI 写实肖像——本猫出镜的电影级档案照</li>
+          </ul>
+          <button class="stamp-btn small" id="btn-unlock">申请调阅 · ¥9.9</button>
+          <p class="tiny center" id="unlock-tip"></p>
+        </div>
+      </section>
+
+      <div class="r-actions">
+        <button class="ghost" id="btn-retest">↺ 重新建档</button>
+      </div>
+      <footer class="foot">喵格研究所 · 鉴定结果偏娱乐，请配合猫条食用</footer>
+    </div>
+  </div>
+
+  <!-- 档案简况弹窗 -->
+  <div class="modal" id="type-modal">
+    <div class="modal-inner" id="modal-inner"></div>
+  </div>
+
+  <script src="../cats.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
