@@ -390,7 +390,78 @@
   // === POSTER ===
   document.getElementById('btn-poster').addEventListener('click', generatePoster);
 
-  function generatePoster() {
+  function svgToImage(svgStr) {
+    return new Promise(resolve => {
+      const blob = new Blob([svgStr], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+      img.src = url;
+    });
+  }
+
+  // --- 海报绘制辅助：贴纸风卡片 / 胶囊 / 标题条 ---
+  function stickerRect(ctx, x, y, w, h, r) {
+    ctx.fillStyle = 'rgba(70, 52, 42, 0.15)';
+    roundRect(ctx, x, y + 6, w, h, r); ctx.fill();
+    ctx.fillStyle = '#fff';
+    roundRect(ctx, x, y, w, h, r); ctx.fill();
+    ctx.strokeStyle = '#46342a'; ctx.lineWidth = 3;
+    roundRect(ctx, x, y, w, h, r); ctx.stroke();
+  }
+
+  function pillRect(ctx, x, y, w, h, fill, stroke, lw) {
+    roundRect(ctx, x, y, w, h, h / 2);
+    ctx.fillStyle = fill; ctx.fill();
+    ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke();
+  }
+
+  function headerBand(ctx, x, y, w, h, r, color, label) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h);
+    ctx.lineTo(x, y + h);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+    ctx.fillStyle = color; ctx.fill();
+    ctx.strokeStyle = '#46342a'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.font = '26px "ZCOOL KuaiLe", "PingFang SC", sans-serif';
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x + w / 2, y + h / 2 + 9);
+  }
+
+  function drawTraitCard(ctx, x, y, w, h, label, color, items) {
+    stickerRect(ctx, x, y, w, h, 20);
+    headerBand(ctx, x, y, w, 52, 20, color, label);
+    ctx.font = '22px "PingFang SC", sans-serif';
+    ctx.fillStyle = '#46342a';
+    ctx.textAlign = 'left';
+    items.slice(0, 2).forEach((it, i) => {
+      ctx.fillText('🐾 ' + it, x + 28, y + 100 + i * 46, w - 56);
+    });
+  }
+
+  function drawTagRow(ctx, tags, y) {
+    ctx.font = '22px "PingFang SC", sans-serif';
+    const pad = 32, gap = 16, h = 44;
+    const ws = tags.map(tag => ctx.measureText(tag).width + pad);
+    const total = ws.reduce((a, b) => a + b, 0) + gap * (ws.length - 1);
+    let x = (750 - total) / 2;
+    tags.forEach((tag, i) => {
+      pillRect(ctx, x, y, ws[i], h, '#fff', '#46342a', 2.5);
+      ctx.fillStyle = '#d95f1d';
+      ctx.textAlign = 'left';
+      ctx.fillText(tag, x + pad / 2, y + 29);
+      x += ws[i] + gap;
+    });
+  }
+
+  async function generatePoster() {
     track('poster_generate', resultType.code);
     const canvas = document.getElementById('poster-canvas');
     const ctx = canvas.getContext('2d');
@@ -403,141 +474,145 @@
 
     const t = resultType;
     const group = TYPE_GROUPS[t.group];
+    const INK = '#46342a', ORANGE = '#f2762e', BROWN = '#9c8168';
 
-    // Background
-    const grad = ctx.createLinearGradient(0, 0, W, H);
-    grad.addColorStop(0, '#fff6e6');
-    grad.addColorStop(0.5, '#ffe4cf');
-    grad.addColorStop(1, '#fff6e6');
+    try { await document.fonts.ready; } catch (e) { /* 字体未就绪也继续 */ }
+
+    // 预加载全部头像：主角 + 拍档×2 + 冤家×2
+    const [mainImg, ...matchImgs] = await Promise.all([
+      svgToImage(catSVG(t.code)),
+      ...t.bestMatch.slice(0, 2).map(c => svgToImage(catSVG(c))),
+      ...t.challenging.slice(0, 2).map(c => svgToImage(catSVG(c))),
+    ]);
+
+    // --- 背景 ---
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, '#ffedd0');
+    grad.addColorStop(0.55, '#ffe2c6');
+    grad.addColorStop(1, '#ffd8b6');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
-
-    // Decorative circles
-    ctx.globalAlpha = 0.08;
-    ctx.fillStyle = '#f2762e';
-    ctx.beginPath(); ctx.arc(100, 200, 150, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(650, 900, 200, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 0.12;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(70, 240, 190, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(690, 1080, 230, 0, Math.PI * 2); ctx.fill();
     ctx.globalAlpha = 1;
 
-    // Title
-    ctx.font = '42px "ZCOOL KuaiLe", "PingFang SC", sans-serif';
-    ctx.fillStyle = '#f2762e';
+    // --- 品牌头 ---
     ctx.textAlign = 'center';
-    ctx.fillText('🐱 喵格测试', W / 2, 80);
+    ctx.font = '38px "ZCOOL KuaiLe", "PingFang SC", sans-serif';
+    ctx.fillStyle = ORANGE;
+    ctx.fillText('🐱 喵格测试', W / 2, 72);
+    ctx.font = '20px "PingFang SC", sans-serif';
+    ctx.fillStyle = BROWN;
+    ctx.fillText('MEOW-BTI · 发现你家猫主子的隐藏性格', W / 2, 106);
 
-    ctx.font = '24px "PingFang SC", sans-serif';
-    ctx.fillStyle = '#9c8168';
-    ctx.fillText('发现你家猫主子的隐藏性格', W / 2, 120);
+    // --- Hero：圆框头像 + 名字/类型/派系 ---
+    const ax = 185, ay = 280, ar = 105;
+    ctx.beginPath(); ctx.arc(ax, ay, ar + 12, 0, Math.PI * 2);
+    ctx.strokeStyle = ORANGE; ctx.lineWidth = 10; ctx.stroke();
+    ctx.beginPath(); ctx.arc(ax, ay, ar, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.stroke();
+    if (mainImg) ctx.drawImage(mainImg, ax - 88, ay - 88, 176, 176);
 
-    // Cat SVG → render as image
-    const svgStr = catSVG(t.code);
-    const svgBlob = new Blob([svgStr], { type: 'image/svg+xml' });
-    const svgUrl = URL.createObjectURL(svgBlob);
-    const img = new Image();
-    img.onload = () => {
-      ctx.drawImage(img, W / 2 - 120, 160, 240, 240);
-      URL.revokeObjectURL(svgUrl);
-      finishPoster(ctx, W, H, t, group);
-    };
-    img.onerror = () => {
-      finishPoster(ctx, W, H, t, group);
-    };
-    img.src = svgUrl;
-  }
-
-  function finishPoster(ctx, W, H, t, group) {
-    // Cat name
-    ctx.font = 'bold 32px "PingFang SC", sans-serif';
-    ctx.fillStyle = '#46342a';
-    ctx.textAlign = 'center';
-    ctx.fillText(`${catName} 的性格类型`, W / 2, 440);
-
-    // Type name
-    ctx.font = '56px "ZCOOL KuaiLe", "PingFang SC", sans-serif';
-    ctx.fillStyle = '#f2762e';
-    ctx.fillText(t.name, W / 2, 510);
-
-    // Code
-    ctx.font = '28px "PingFang SC", sans-serif';
-    ctx.fillStyle = '#d99a63';
-    ctx.fillText(t.code + ' · ' + group.icon + ' ' + group.name, W / 2, 555);
-
-    // Tags
-    ctx.font = '22px "PingFang SC", sans-serif';
-    ctx.fillStyle = '#f2762e';
-    ctx.fillText(t.tags.join('  ·  '), W / 2, 610);
-
-    // Desc card
-    const descX = 60, descY = 660, descW = W - 120;
-    ctx.fillStyle = 'rgba(255,255,255,0.8)';
-    roundRect(ctx, descX, descY, descW, 320, 20);
-    ctx.fill();
-
-    ctx.font = '22px "PingFang SC", sans-serif';
-    ctx.fillStyle = '#46342a';
     ctx.textAlign = 'left';
-    wrapText(ctx, t.desc, descX + 30, descY + 40, descW - 60, 34);
+    const nameLine = `${catName} 是……`;
+    ctx.font = 'bold 34px "PingFang SC", sans-serif';
+    if (ctx.measureText(nameLine).width > 370) ctx.font = 'bold 27px "PingFang SC", sans-serif';
+    ctx.fillStyle = INK;
+    ctx.fillText(nameLine, 330, 218);
+    ctx.font = '58px "ZCOOL KuaiLe", "PingFang SC", sans-serif';
+    ctx.fillStyle = ORANGE;
+    ctx.fillText(t.name, 330, 295);
+    ctx.font = 'bold 26px "PingFang SC", sans-serif';
+    ctx.fillStyle = '#c98a4b';
+    ctx.fillText(t.code, 330, 340);
+    const gLabel = `${group.icon} ${group.name} · ${group.desc}`;
+    ctx.font = '20px "PingFang SC", sans-serif';
+    const gw = Math.min(ctx.measureText(gLabel).width + 36, 370);
+    pillRect(ctx, 330, 362, gw, 42, '#fff', group.color, 2.5);
+    ctx.fillStyle = group.color;
+    ctx.fillText(gLabel, 348, 389, gw - 36);
 
-    // Quotes
-    ctx.font = 'italic 20px "PingFang SC", sans-serif';
-    ctx.fillStyle = '#f2762e';
-    const qY = descY + 200;
+    // --- 标签胶囊 ---
+    drawTagRow(ctx, t.tags, 452);
+
+    // --- 语录气泡 ×2 ---
     t.quotes.slice(0, 2).forEach((q, i) => {
-      ctx.fillText(q, descX + 30, qY + i * 32);
+      const qy = 530 + i * 74;
+      stickerRect(ctx, 60, qy, W - 120, 58, 29);
+      ctx.font = '22px "PingFang SC", sans-serif';
+      ctx.fillStyle = INK;
+      ctx.textAlign = 'left';
+      ctx.fillText('💬 ' + q, 90, qy + 37, W - 180);
     });
 
-    // Strengths / Weaknesses
-    const traitY = 1020;
+    // --- 优势 / 弱点卡 ---
+    drawTraitCard(ctx, 60, 690, 305, 190, '✨ 优势', '#5fbf95', t.strengths);
+    drawTraitCard(ctx, 385, 690, 305, 190, '⚡ 弱点', '#e8a23c', t.weaknesses);
+
+    // --- 缘分匹配卡 ---
+    stickerRect(ctx, 60, 910, W - 120, 230, 20);
+    headerBand(ctx, 60, 910, W - 120, 52, 20, '#ff8fa3', '💞 缘分匹配');
     ctx.font = 'bold 22px "PingFang SC", sans-serif';
     ctx.textAlign = 'center';
     ctx.fillStyle = '#2e8f5e';
-    ctx.fillText('✨ ' + t.strengths.join(' · '), W / 2, traitY);
-    ctx.fillStyle = '#cd7a12';
-    ctx.fillText('⚡ ' + t.weaknesses.join(' · '), W / 2, traitY + 40);
-
-    // MBTI 双极维度条（与结果页一致：中线出发，圆点偏向优势侧）
-    const barY = 1100;
-    DIM_CONFIG.forEach((d, i) => {
-      const y = barY + i * 40;
-      ctx.font = '16px "PingFang SC", sans-serif';
-      ctx.fillStyle = '#9c8168';
-      ctx.textAlign = 'left';
-      ctx.fillText(`${d.left[0]} ${d.left[1]}`, 70, y + 5);
-      ctx.textAlign = 'right';
-      ctx.fillText(`${d.right[1]} ${d.right[0]}`, W - 70, y + 5);
-
-      const bx = 180, bw = W - 360, bh = 10;
-      // 轨道
-      ctx.fillStyle = '#f0e2c8';
-      roundRect(ctx, bx, y - 5, bw, bh, 5);
-      ctx.fill();
-      // 中线
-      ctx.fillStyle = '#dcc9ae';
-      ctx.fillRect(bx + bw / 2 - 1, y - 9, 2, 18);
-      // 从中线到圆点的填充
-      const pos = dimPos(d) / 100;
-      const px = bx + bw * pos;
-      const cxm = bx + bw / 2;
-      ctx.fillStyle = d.color;
-      roundRect(ctx, Math.min(px, cxm), y - 5, Math.max(Math.abs(px - cxm), 4), bh, 5);
-      ctx.fill();
-      // 圆点
-      ctx.beginPath();
-      ctx.arc(px, y, 9, 0, Math.PI * 2);
-      ctx.fillStyle = d.color;
-      ctx.fill();
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 3;
-      ctx.stroke();
+    ctx.fillText('最佳拍档', 217, 1002);
+    ctx.fillStyle = '#d95757';
+    ctx.fillText('尽量避免', 533, 1002);
+    // 分隔虚线
+    ctx.strokeStyle = '#ecd9bd'; ctx.lineWidth = 2;
+    ctx.setLineDash([6, 6]);
+    ctx.beginPath(); ctx.moveTo(375, 985); ctx.lineTo(375, 1120); ctx.stroke();
+    ctx.setLineDash([]);
+    const combos = [
+      { codes: t.bestMatch.slice(0, 2), imgs: [matchImgs[0], matchImgs[1]], cx: 217 },
+      { codes: t.challenging.slice(0, 2), imgs: [matchImgs[2], matchImgs[3]], cx: 533 },
+    ];
+    combos.forEach(cb => {
+      cb.codes.forEach((c, i) => {
+        const mx = cb.cx + (i === 0 ? -66 : 66), my = 1058;
+        ctx.beginPath(); ctx.arc(mx, my, 40, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff'; ctx.fill();
+        ctx.strokeStyle = INK; ctx.lineWidth = 2.5; ctx.stroke();
+        if (cb.imgs[i]) ctx.drawImage(cb.imgs[i], mx - 34, my - 34, 68, 68);
+        ctx.font = '18px "PingFang SC", sans-serif';
+        ctx.fillStyle = INK;
+        ctx.textAlign = 'center';
+        ctx.fillText(CAT_TYPES[c].name, mx, my + 68);
+      });
     });
 
-    // Footer
+    // --- 维度条 ---
+    DIM_CONFIG.forEach((d, i) => {
+      const y = 1180 + i * 36;
+      ctx.font = '18px "PingFang SC", sans-serif';
+      ctx.fillStyle = BROWN;
+      ctx.textAlign = 'left';
+      ctx.fillText(`${d.left[0]} ${d.left[1]}`, 70, y + 6);
+      ctx.textAlign = 'right';
+      ctx.fillText(`${d.right[1]} ${d.right[0]}`, W - 70, y + 6);
+      const bx = 195, bw = W - 390, bh = 10;
+      ctx.fillStyle = '#f3e2c4';
+      roundRect(ctx, bx, y - 5, bw, bh, 5); ctx.fill();
+      ctx.fillStyle = '#dcc9ae';
+      ctx.fillRect(bx + bw / 2 - 1, y - 10, 2, 20);
+      const pos = dimPos(d) / 100;
+      const px = bx + bw * pos, cxm = bx + bw / 2;
+      ctx.fillStyle = d.color;
+      roundRect(ctx, Math.min(px, cxm), y - 5, Math.max(Math.abs(px - cxm), 4), bh, 5); ctx.fill();
+      ctx.beginPath(); ctx.arc(px, y, 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
+    });
+
+    // --- 尾部 ---
     ctx.textAlign = 'center';
     ctx.font = '18px "PingFang SC", sans-serif';
-    ctx.fillStyle = '#d99a63';
-    ctx.fillText('长按保存图片 · 分享给朋友一起测', W / 2, H - 40);
+    ctx.fillStyle = '#c98a4b';
+    ctx.fillText('长按保存图片 · 和朋友的猫一起测', W / 2, 1322);
 
-    // Show modal
     $posterModal.classList.add('active');
   }
 
