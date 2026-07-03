@@ -21,6 +21,31 @@
   const $posterModal = document.getElementById('poster-modal');
   const $typeModal = document.getElementById('type-modal');
 
+  // --- V0.5 配置 ---
+  const CONTACT_WECHAT = ''; // 预约联系方式（微信号/公众号），填写后付费弹窗会展示
+
+  // --- 工具 ---
+  const esc = s => String(s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  function showToast(msg) {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.classList.add('show'), 10);
+    setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 2200);
+  }
+
+  // --- 配对邀请参数（好友分享链接进入） ---
+  const matchInvite = (() => {
+    const p = new URLSearchParams(location.search);
+    const code = (p.get('match') || '').toUpperCase();
+    if (!CAT_TYPES[code]) return null;
+    const name = esc((p.get('mname') || '').trim().slice(0, 12));
+    return { code, name: name || CAT_TYPES[code].name };
+  })();
+
   // --- View switching ---
   function showView(name) {
     Object.values(views).forEach(v => v.classList.remove('active'));
@@ -41,6 +66,7 @@
     catColor = document.getElementById('cat-color').value;
     currentQ = 0;
     answers.fill(null);
+    track('start_test', catColor);
     renderQuestion();
     showView('test');
   });
@@ -109,6 +135,7 @@
     resultScores = calcScores(answers);
     const code = getTypeCode(resultScores);
     resultType = CAT_TYPES[code];
+    track('complete_test', code);
     renderResult();
     showView('result');
   }
@@ -156,6 +183,44 @@
 
     // Explore grid
     renderExplore();
+
+    // Paywall
+    document.getElementById('paywall-cat-name').textContent = catName;
+    document.getElementById('paywall-sample-text').textContent =
+      `"半夜跑酷不是精力过剩，是${t.name}在执行自己的巡逻计划。这时它需要的不是制止，而是……`;
+
+    // 配对结果（从好友邀请链接进入时展示）
+    renderPairResult();
+
+    track('view_result', t.code);
+  }
+
+  // --- 配对结果卡 ---
+  function renderPairResult() {
+    const box = document.getElementById('pair-result');
+    if (!matchInvite) { box.style.display = 'none'; return; }
+    const inviter = CAT_TYPES[matchInvite.code];
+    const pair = getPairing(matchInvite.code, matchInvite.name, resultType.code, esc(catName));
+    box.style.display = 'block';
+    box.innerHTML = `
+      <h3>💞 缘分揭晓</h3>
+      <div class="pair-cats">
+        <div class="pair-cat">
+          <div class="pair-svg">${catSVG(matchInvite.code)}</div>
+          <div class="pair-name">${matchInvite.name}</div>
+          <div class="pair-type">${inviter.name}</div>
+        </div>
+        <div class="pair-score"><b>${pair.score}</b><span>缘分值</span></div>
+        <div class="pair-cat">
+          <div class="pair-svg">${catSVG(resultType.code)}</div>
+          <div class="pair-name">${esc(catName)}</div>
+          <div class="pair-type">${resultType.name}</div>
+        </div>
+      </div>
+      <div class="pair-title">「${pair.title}」</div>
+      <p class="pair-line">${pair.line}</p>
+    `;
+    track('pair_shown', `${matchInvite.code}-${resultType.code}`);
   }
 
   // --- MBTI 双极维度条 ---
@@ -253,6 +318,7 @@
   document.getElementById('btn-retest').addEventListener('click', () => {
     currentQ = 0;
     answers.fill(null);
+    track('retest');
     showView('landing');
   });
 
@@ -260,6 +326,7 @@
   document.getElementById('btn-poster').addEventListener('click', generatePoster);
 
   function generatePoster() {
+    track('poster_generate', resultType.code);
     const canvas = document.getElementById('poster-canvas');
     const ctx = canvas.getContext('2d');
     const W = 750, H = 1334;
@@ -441,6 +508,7 @@
 
   // Poster save
   document.getElementById('btn-save-poster').addEventListener('click', () => {
+    track('poster_save', resultType.code);
     const canvas = document.getElementById('poster-canvas');
     canvas.toBlob(blob => {
       const a = document.createElement('a');
@@ -458,6 +526,88 @@
     if (e.target === $posterModal) $posterModal.classList.remove('active');
   });
 
+  // --- Landing: 16 类型图鉴 ---
+  function renderLandingGallery() {
+    const gallery = document.getElementById('landing-gallery');
+    for (const g of Object.values(TYPE_GROUPS)) {
+      const sec = document.createElement('div');
+      sec.className = 'lt-group';
+      sec.innerHTML = `
+        <div class="lt-group-head" style="--g-color:${g.color}">
+          <span class="lt-group-name">${g.icon} ${g.name}</span>
+          <span class="lt-group-desc">${g.desc}</span>
+        </div>`;
+      const grid = document.createElement('div');
+      grid.className = 'explore-grid';
+      g.types.forEach(code => {
+        const t = CAT_TYPES[code];
+        const card = document.createElement('div');
+        card.className = 'explore-card';
+        card.innerHTML = `
+          <div class="ec-svg">${catSVG(code)}</div>
+          <div class="ec-name">${t.name}</div>
+          <div class="ec-code">${code}</div>
+        `;
+        card.addEventListener('click', () => showTypeDetail(code));
+        grid.appendChild(card);
+      });
+      sec.appendChild(grid);
+      gallery.appendChild(sec);
+    }
+  }
+
+  // --- Paywall（V0.5 假支付：记录意愿） ---
+  const $paywallModal = document.getElementById('paywall-modal');
+  document.getElementById('btn-paywall').addEventListener('click', () => {
+    track('paywall_click', resultType.code);
+    document.getElementById('paywall-step1').style.display = 'block';
+    document.getElementById('paywall-step2').style.display = 'none';
+    $paywallModal.classList.add('active');
+  });
+  document.getElementById('btn-unlock').addEventListener('click', () => {
+    track('paywall_unlock_click', resultType.code);
+    document.getElementById('paywall-step1').style.display = 'none';
+    document.getElementById('paywall-step2').style.display = 'block';
+    document.getElementById('paywall-contact').innerHTML = CONTACT_WECHAT
+      ? `现在添加微信 <b>${CONTACT_WECHAT}</b> 备注「喵」，<br>上线当天立享 <b>5 折</b>！`
+      : '你的解锁请求已记录 ✅<br>支付功能正在加急上线，过几天再来看看吧！';
+  });
+  document.getElementById('paywall-close').addEventListener('click', () => $paywallModal.classList.remove('active'));
+  $paywallModal.addEventListener('click', (e) => { if (e.target === $paywallModal) $paywallModal.classList.remove('active'); });
+
+  // --- 配对邀请链接 ---
+  document.getElementById('btn-invite').addEventListener('click', () => {
+    const url = `${location.origin}${location.pathname}?match=${resultType.code}&mname=${encodeURIComponent(catName)}`;
+    const done = () => { showToast('邀请链接已复制，发给养猫的朋友吧 🐾'); track('invite_copy', resultType.code); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(done, () => fallbackCopy(url, done));
+    } else {
+      fallbackCopy(url, done);
+    }
+  });
+  function fallbackCopy(text, cb) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); cb(); } catch (e) { prompt('复制下面的链接发给朋友：', text); }
+    ta.remove();
+  }
+
+  // --- Privacy modal ---
+  const $privacyModal = document.getElementById('privacy-modal');
+  document.getElementById('privacy-link').addEventListener('click', () => $privacyModal.classList.add('active'));
+  document.getElementById('privacy-close').addEventListener('click', () => $privacyModal.classList.remove('active'));
+  $privacyModal.addEventListener('click', (e) => { if (e.target === $privacyModal) $privacyModal.classList.remove('active'); });
+
   // Init
+  if (matchInvite) {
+    const banner = document.getElementById('match-banner');
+    banner.style.display = 'block';
+    banner.innerHTML = `💌 <b>${matchInvite.name}</b>（${CAT_TYPES[matchInvite.code].name}）向你家猫发来配对邀请！<br>完成测试，揭晓两只猫的缘分`;
+    track('match_visit', matchInvite.code);
+  }
+  track('visit');
+  renderLandingGallery();
   showView('landing');
 })();

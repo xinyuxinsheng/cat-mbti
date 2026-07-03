@@ -25,10 +25,16 @@
         <span style="top:70%;right:6%">🐭</span>
       </div>
       <div class="landing">
+        <div class="match-banner" id="match-banner" style="display:none"></div>
         <div class="landing-cat" id="landing-cat"></div>
         <div><span class="title-chip">MEOW-BTI · 喵格研究所</span></div>
         <h1>喵格<span class="accent">测试</span></h1>
         <p class="subtitle">24道题，发现你家猫主子的隐藏性格</p>
+        <div class="benefits">
+          <div class="benefit"><span class="b-icon">🧠</span><div><b>读懂迷惑行为</b><small>半夜跑酷、疯狂踩奶……行为背后都是性格</small></div></div>
+          <div class="benefit"><span class="b-icon">💡</span><div><b>拿到相处指南</b><small>按它的性格选玩具、留空间、给自由</small></div></div>
+          <div class="benefit"><span class="b-icon">📸</span><div><b>领专属人格海报</b><small>一张能直接发朋友圈的猫咪人格卡</small></div></div>
+        </div>
         <div class="landing-form">
           <div class="input-group">
             <label for="cat-name">猫咪名字 *</label>
@@ -55,6 +61,12 @@
             </select>
           </div>
           <button class="btn-primary" id="btn-start">开始测试 🐾</button>
+          <p class="privacy-line">开始测试即表示同意 <a id="privacy-link">《隐私说明》</a></p>
+        </div>
+        <div class="landing-types">
+          <h2>🐱 先认识一下 16 种喵格</h2>
+          <p class="lt-sub">你家主子是哪一款？点开看看</p>
+          <div id="landing-gallery"></div>
         </div>
       </div>
       <div class="footer">
@@ -84,6 +96,7 @@
     <!-- === RESULT === -->
     <div class="view" id="view-result">
       <div class="result">
+        <div class="result-section pair-card" id="pair-result" style="display:none"></div>
         <div class="result-hero">
           <div class="result-cat-svg" id="result-cat-svg"></div>
           <div class="result-type-name" id="result-type-name"></div>
@@ -135,6 +148,26 @@
           </div>
         </div>
 
+        <div class="result-section paywall" id="paywall-section">
+          <h3>🔐 <span id="paywall-cat-name"></span>的深度报告</h3>
+          <ul class="paywall-list">
+            <li><span class="pw-icon">📖</span>行为翻译词典——每个迷惑行为的真实含义</li>
+            <li><span class="pw-icon">⚖️</span>相处红黑榜——千万别对它做的 5 件事</li>
+            <li><span class="pw-icon">🏠</span>喂养与环境建议——按性格布置它的小天地</li>
+            <li><span class="pw-icon">📊</span>完整维度解读——四个维度逐条深挖</li>
+            <li><span class="pw-icon">🎬</span>AI 写实电影卡片——上传照片，你家猫主演的电影海报</li>
+          </ul>
+          <div class="paywall-sample"><p id="paywall-sample-text"></p></div>
+          <div class="paywall-price"><b>¥9.9</b> <s>¥39</s> <span class="pw-tag">限时内测价</span></div>
+          <button class="btn-primary btn-paywall" id="btn-paywall">解锁完整版 🔓</button>
+        </div>
+
+        <div class="result-section invite-section">
+          <h3>💞 测测和好友猫咪的缘分</h3>
+          <p class="invite-desc">复制邀请链接发给养猫的朋友，TA 家猫测完，自动揭晓两只猫的相性！</p>
+          <button class="btn-secondary" id="btn-invite">复制邀请链接 🔗</button>
+        </div>
+
         <div class="result-actions">
           <button class="btn-primary" id="btn-poster">生成分享海报 📸</button>
           <button class="btn-secondary" id="btn-retest">重新测试 🔄</button>
@@ -171,7 +204,48 @@
     <div class="type-modal-inner" id="type-modal-inner"></div>
   </div>
 
+  <!-- PAYWALL MODAL -->
+  <div class="type-modal" id="paywall-modal">
+    <div class="type-modal-inner">
+      <button class="poster-close" id="paywall-close">✕</button>
+      <div id="paywall-step1">
+        <h2 style="font-family:var(--font-fun);font-size:20px;color:var(--ink);margin-bottom:14px;text-align:center">🔐 深度报告 + AI 专属卡片</h2>
+        <ul class="paywall-list">
+          <li><span class="pw-icon">📖</span>行为翻译词典</li>
+          <li><span class="pw-icon">⚖️</span>相处红黑榜</li>
+          <li><span class="pw-icon">🏠</span>喂养与环境建议</li>
+          <li><span class="pw-icon">📊</span>完整维度解读</li>
+          <li><span class="pw-icon">🎬</span>AI 写实电影卡片（含 1 次免费重生成）</li>
+        </ul>
+        <div class="paywall-price" style="text-align:center;margin:14px 0"><b>¥9.9</b> <s>¥39</s> <span class="pw-tag">限时内测价</span></div>
+        <button class="btn-primary" id="btn-unlock" style="width:100%">立即解锁 ¥9.9</button>
+        <p style="font-size:11px;color:var(--text-secondary);text-align:center;margin-top:10px">虚拟内容，解锁后不支持退款</p>
+      </div>
+      <div id="paywall-step2" style="display:none;text-align:center">
+        <div style="font-size:44px;margin:10px 0">🚧</div>
+        <h2 style="font-family:var(--font-fun);font-size:20px;color:var(--ink);margin-bottom:12px">内测名额开放中</h2>
+        <p id="paywall-contact" style="font-size:14px;line-height:1.9;color:var(--text)"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIVACY MODAL -->
+  <div class="type-modal" id="privacy-modal">
+    <div class="type-modal-inner">
+      <button class="poster-close" id="privacy-close">✕</button>
+      <h2 style="font-family:var(--font-fun);font-size:20px;color:var(--ink);margin-bottom:14px">🔒 隐私说明</h2>
+      <div style="font-size:14px;line-height:1.9;color:var(--text)">
+        <p style="margin-bottom:10px">· 本测试为娱乐向性格测试，结果仅供参考，不构成任何专业建议。</p>
+        <p style="margin-bottom:10px">· 你输入的猫咪名字、品种和答题记录<b>仅在你的设备上处理</b>，用于生成测试结果，不会上传或存储到任何服务器。</p>
+        <p style="margin-bottom:10px">· 分享海报由你的设备本地生成，是否保存、分享完全由你决定。</p>
+        <p>· 未来小程序版本如涉及照片上传等功能，会在收集前另行征得你的同意。</p>
+      </div>
+    </div>
+  </div>
+
   <script src="cats.js"></script>
+  <script src="pairing.js"></script>
+  <script src="analytics.js"></script>
   <script src="app.js"></script>
 
   <!-- Landing page cat SVG -->
