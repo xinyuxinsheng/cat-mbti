@@ -17,7 +17,11 @@
     landing: document.getElementById('view-landing'),
     test: document.getElementById('view-test'),
     result: document.getElementById('view-result'),
+    archive: document.getElementById('view-archive'),
+    mine: document.getElementById('view-mine'),
   };
+  // 每个视图归属的底部 Tab（test/result 归"测一测"）
+  const TAB_OF = { landing: 'landing', test: 'landing', result: 'landing', archive: 'archive', mine: 'mine' };
   const $posterModal = document.getElementById('poster-modal');
   const $typeModal = document.getElementById('type-modal');
 
@@ -50,7 +54,67 @@
   function showView(name) {
     Object.values(views).forEach(v => v.classList.remove('active'));
     views[name].classList.add('active');
+    // 答题时隐藏 Tab 栏（专注），其余视图高亮所属 Tab
+    document.getElementById('tabbar').style.display = name === 'test' ? 'none' : 'flex';
+    document.querySelectorAll('.tab-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.view === TAB_OF[name]));
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // --- Tabbar ---
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const v = btn.dataset.view;
+      if (v === 'archive') { renderArchive(); track('tab_archive'); }
+      if (v === 'mine') track('tab_mine');
+      showView(v);
+    });
+  });
+
+  // --- 猫咪档案（本地存储） ---
+  function saveCatRecord() {
+    try {
+      const recs = JSON.parse(localStorage.getItem('mbti_cats') || '[]');
+      recs.unshift({ name: catName, color: catColor, code: resultType.code, scores: resultScores, t: Date.now() });
+      localStorage.setItem('mbti_cats', JSON.stringify(recs.slice(0, 50)));
+    } catch (e) { /* 存储失败不影响主流程 */ }
+  }
+
+  function renderArchive() {
+    const recs = JSON.parse(localStorage.getItem('mbti_cats') || '[]');
+    const unlocked = new Set(recs.map(r => r.code));
+    document.getElementById('archive-progress').textContent =
+      recs.length ? `已点亮 ${unlocked.size} / 16 种喵格 · 共 ${recs.length} 次测试` : '';
+    const list = document.getElementById('archive-list');
+    if (!recs.length) {
+      list.innerHTML = '<div class="archive-empty">还没有猫咪档案<br>去给主子测一个吧 🐾</div>';
+      return;
+    }
+    list.innerHTML = '';
+    recs.forEach(r => {
+      const t = CAT_TYPES[r.code];
+      if (!t) return;
+      const card = document.createElement('div');
+      card.className = 'archive-card';
+      card.innerHTML = `
+        <div class="ac-svg">${catSVG(r.code)}</div>
+        <div class="ac-info">
+          <div class="ac-name">${esc(r.name)}</div>
+          <div class="ac-type">${t.name} · ${r.code}</div>
+          <div class="ac-date">${new Date(r.t).toLocaleDateString('zh-CN')}</div>
+        </div>
+        <span class="ac-arrow">→</span>`;
+      card.addEventListener('click', () => {
+        catName = r.name;
+        catColor = r.color || '';
+        resultScores = r.scores;
+        resultType = CAT_TYPES[r.code];
+        renderResult();
+        showView('result');
+        track('archive_open', r.code);
+      });
+      list.appendChild(card);
+    });
   }
 
   // === LANDING ===
@@ -136,6 +200,7 @@
     const code = getTypeCode(resultScores);
     resultType = CAT_TYPES[code];
     track('complete_test', code);
+    saveCatRecord();
     renderResult();
     showView('result');
   }
@@ -597,6 +662,7 @@
   // --- Privacy modal ---
   const $privacyModal = document.getElementById('privacy-modal');
   document.getElementById('privacy-link').addEventListener('click', () => $privacyModal.classList.add('active'));
+  document.getElementById('privacy-link-2').addEventListener('click', () => $privacyModal.classList.add('active'));
   document.getElementById('privacy-close').addEventListener('click', () => $privacyModal.classList.remove('active'));
   $privacyModal.addEventListener('click', (e) => { if (e.target === $privacyModal) $privacyModal.classList.remove('active'); });
 

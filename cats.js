@@ -22,7 +22,7 @@ const QUESTIONS = [
   { id: 13, text: '吃饭时护食——你的手或其他宠物靠近它的碗，它会挡开、哈气或加速吞咽', dim: 'TF', dir: 1 },
   { id: 14, text: '和你或其他宠物玩闹时出手没轻没重，玩着玩着就动真格', dim: 'TF', dir: 1 },
   { id: 15, text: '没有按时喂饭或者被忽视时，会大声叫唤甚至发脾气', dim: 'TF', dir: 1 },
-  { id: 16, text: '喜欢按自己的节奏来，你叫它它不一定理你', dim: 'TF', dir: 1 },
+  { id: 16, text: '只要你呼唤它、摸摸它，它基本都会温和地回应你', dim: 'TF', dir: -1 },
   { id: 17, text: '见到陌生的猫——不管是现实里、窗外还是屏幕里的——会炸毛、哈气或上爪，摆出强势姿态', dim: 'TF', dir: 1 },
   { id: 18, text: '想要某样东西的时候非常执着，不达目的不罢休', dim: 'TF', dir: 1 },
   { id: 19, text: '你的注意力在别处时（手机、电脑、客人或别的宠物），它会强行挤进来打断你', dim: 'TF', dir: 1 },
@@ -49,18 +49,19 @@ function calcScores(answers) {
   const pct = {};
   for (const [k, arr] of Object.entries(dims)) {
     const sum = arr.reduce((a, b) => a + b, 0);
-    const max = arr.length * 5;
-    pct[k] = max > 0 ? sum / max : 0.5;
+    // 归一化到 0-1，且"不确定"(3分) 恰好落在 0.5 中线，避免中庸作答整体偏向高分侧
+    pct[k] = arr.length > 0 ? (sum - arr.length) / (arr.length * 4) : 0.5;
   }
   return pct; // 0-1, higher = E/N/T/J side
 }
 
 function getTypeCode(scores) {
+  // 平局（正好 0.5）判给温和侧 I/S/F/P，避免中庸作答集中到强势类型
   return (
-    (scores.EI >= 0.5 ? 'E' : 'I') +
-    (scores.SN >= 0.5 ? 'N' : 'S') +
-    (scores.TF >= 0.5 ? 'T' : 'F') +
-    (scores.JP >= 0.5 ? 'J' : 'P')
+    (scores.EI > 0.5 ? 'E' : 'I') +
+    (scores.SN > 0.5 ? 'N' : 'S') +
+    (scores.TF > 0.5 ? 'T' : 'F') +
+    (scores.JP > 0.5 ? 'J' : 'P')
   );
 }
 

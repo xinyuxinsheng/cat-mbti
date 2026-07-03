@@ -65,12 +65,12 @@
         </div>
         <div class="landing-types">
           <h2>🐱 先认识一下 16 种喵格</h2>
-          <p class="lt-sub">你家主子是哪一款？点开看看</p>
+          <p class="lt-sub">先猜猜你家主子最像哪一款，测完 24 题验证直觉<br>点卡片可以偷看每种喵格的性格档案</p>
           <div id="landing-gallery"></div>
         </div>
       </div>
       <div class="footer">
-        基于猫咪行为学研究 · 仅供娱乐参考
+        题目设计参考猫科人格研究「Feline Five」五维模型<br>结果偏娱乐，请配合猫条食用 🐟
       </div>
     </div>
 
@@ -150,6 +150,7 @@
 
         <div class="result-section paywall" id="paywall-section">
           <h3>🔐 <span id="paywall-cat-name"></span>的深度报告</h3>
+          <p class="pw-trust">报告框架参考猫科人格研究「Feline Five」编写</p>
           <ul class="paywall-list">
             <li><span class="pw-icon">📖</span>行为翻译词典——每个迷惑行为的真实含义</li>
             <li><span class="pw-icon">⚖️</span>相处红黑榜——千万别对它做的 5 件事</li>
@@ -179,10 +180,51 @@
         </div>
       </div>
       <div class="footer">
-        喵格测试 · 基于猫咪行为学研究 · 仅供娱乐参考
+        喵格测试 · 题目参考「Feline Five」猫科人格研究<br>结果偏娱乐，请配合猫条食用 🐟
       </div>
     </div>
+
+    <!-- === ARCHIVE === -->
+    <div class="view" id="view-archive">
+      <div class="archive">
+        <h2 class="page-title">📚 猫咪档案</h2>
+        <p class="archive-progress" id="archive-progress"></p>
+        <div id="archive-list"></div>
+      </div>
+      <div class="footer">同一只猫可以重测 · 档案保存在本机浏览器</div>
+    </div>
+
+    <!-- === MINE === -->
+    <div class="view" id="view-mine">
+      <div class="mine">
+        <h2 class="page-title">😺 我的</h2>
+        <div class="result-section">
+          <h3>🔓 已解锁内容</h3>
+          <p class="mine-text">支付功能上线后，你解锁的深度报告和 AI 专属卡片会出现在这里。</p>
+        </div>
+        <div class="result-section">
+          <h3>🔬 科学依据</h3>
+          <p class="mine-text">题目设计参考猫科动物人格研究「Feline Five」五维模型（Litchfield et al., 2017，基于 2,802 只猫的行为数据），并结合 MBTI 框架做了娱乐化改编。比星座科学一点，比论文好玩很多。</p>
+        </div>
+        <div class="result-section">
+          <h3>🔒 隐私</h3>
+          <p class="mine-text">所有数据仅保存在你自己的设备上。<a class="mine-link" id="privacy-link-2">查看隐私说明</a></p>
+        </div>
+        <div class="result-section">
+          <h3>💬 联系与反馈</h3>
+          <p class="mine-text">有想法或发现 bug？欢迎反馈，帮喵格测试变得更好。</p>
+        </div>
+      </div>
+      <div class="footer">喵格测试 V0.5</div>
+    </div>
   </div>
+
+  <!-- TABBAR -->
+  <nav class="tabbar" id="tabbar">
+    <button class="tab-btn active" data-view="landing"><span class="tab-icon">🐾</span>测一测</button>
+    <button class="tab-btn" data-view="archive"><span class="tab-icon">📚</span>猫咪档案</button>
+    <button class="tab-btn" data-view="mine"><span class="tab-icon">😺</span>我的</button>
+  </nav>
 
   <!-- POSTER MODAL -->
   <div class="poster-modal" id="poster-modal">
