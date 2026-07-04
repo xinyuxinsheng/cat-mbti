@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>喵格研究所 · 猫咪MBTI人格档案</title>
-  <meta name="description" content="猫咪MBTI测试：24 项行为观察，16 型 MBTI 判定，给你家主子核发一张盖章认证的《猫咪MBTI人格证》。">
+  <title>喵格研究所 · 猫咪MBTI猫格证</title>
+  <meta name="description" content="猫咪MBTI测试：24 项行为观察，16 型 MBTI 判定，给你家主子核发一张盖章认证的《猫咪MBTI猫格证》。">
   <meta name="theme-color" content="#f4ead2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +30,7 @@
         <div class="folder-body">
           <div class="mbti-chip">猫咪 MBTI 测试</div>
           <h1>给你家主子<br>建一份 <span class="hl">MBTI 档案</span></h1>
-          <p class="lead">24 项行为观察 → 16 型猫咪 MBTI 判定<br>核发一张盖章认证的《猫咪MBTI人格证》</p>
+          <p class="lead">24 项行为观察 → 16 型猫咪 MBTI 判定<br>核发一张盖章认证的《猫咪MBTI猫格证》</p>
 
           <div class="form-row">
             <label>猫咪姓名</label>
@@ -94,10 +94,10 @@
 
       <div class="issue-line">▼ 档案审核通过 · 现予核发 ▼</div>
 
-      <!-- 猫咪MBTI人格证 -->
+      <!-- 猫咪MBTI猫格证 -->
       <div class="id-card" id="id-card">
         <div class="idc-head">
-          <span class="idc-title">猫咪MBTI人格证</span>
+          <span class="idc-title">猫咪MBTI猫格证</span>
           <span class="idc-en">MEOW MBTI CERTIFICATE</span>
         </div>
         <div class="idc-body">
@@ -109,7 +109,7 @@
             <div class="idc-row"><span class="k">姓 名</span><b id="idc-name"></b></div>
             <div class="idc-row"><span class="k">喵 格</span><b class="idc-type" id="idc-type"></b></div>
             <div class="idc-row"><span class="k">MBTI</span><b id="idc-code" class="mono idc-mbti"></b></div>
-            <div class="idc-row"><span class="k">派 系</span><b id="idc-group"></b></div>
+            <div class="idc-row"><span class="k">占 比</span><b id="idc-rarity"></b></div>
             <div class="idc-row"><span class="k">登 记</span><b id="idc-date" class="mono"></b></div>
           </div>
           <div class="idc-seal">喵格<br>认证</div>
@@ -120,7 +120,10 @@
           <span class="idc-no mono" id="idc-no"></span>
         </div>
       </div>
-      <p class="save-hint">📸 长按截图保存人格证</p>
+
+      <div class="share-cta">
+        <button class="stamp-btn" id="btn-share">分 享 档 案 照 🐾</button>
+      </div>
 
       <!-- 档案正文 -->
       <section class="dossier">
@@ -149,7 +152,7 @@
         </div>
 
         <!-- 机密档案（付费位 + 样章试阅） -->
-        <div class="d-sec d-locked">
+        <div class="d-sec d-locked" id="d-locked">
           <div class="locked-band">机 密 · CLASSIFIED</div>
           <h3>🔒 深度档案 · 待调阅</h3>
 
@@ -189,8 +192,47 @@
         <div class="bureau-sub">FILE CABINET</div>
         <div class="bureau-rule"></div>
       </header>
-      <p class="cabinet-progress" id="cabinet-progress"></p>
-      <div id="cabinet-list"></div>
+
+      <!-- 壹 · 喵喵档案 -->
+      <div class="cab-sec">
+        <h3 class="cab-title"><span class="d-tab">壹</span>喵喵档案</h3>
+        <p class="cabinet-progress" id="cabinet-progress"></p>
+        <div id="cabinet-list"></div>
+      </div>
+
+      <!-- 贰 · 猫友圈 -->
+      <div class="cab-sec">
+        <h3 class="cab-title"><span class="d-tab">贰</span>猫友圈 · 联合档案</h3>
+        <div class="friends-empty" id="friends-empty" style="display:none">
+          <p>还没有好友猫咪的档案 🕳️<br>把测试分享给养猫的朋友，TA 家猫测完后<br>档案会出现在这里，还能做<b>两猫 MBTI 对比</b></p>
+          <button class="stamp-btn small" id="btn-net-share">分享测试给好友</button>
+        </div>
+        <div id="friends-list"></div>
+
+        <!-- 两猫 MBTI 对比 -->
+        <div class="compare-box" id="compare-box" style="display:none">
+          <div class="dict-title">⚖️ 两猫 MBTI 对比</div>
+          <div class="compare-row">
+            <select id="cmp-a"></select>
+            <span class="vs">VS</span>
+            <select id="cmp-b"></select>
+          </div>
+          <button class="stamp-btn small" id="btn-compare">开始对比</button>
+          <div id="compare-result"></div>
+        </div>
+      </div>
+
+      <!-- 叁 · 人 & 猫 MBTI -->
+      <div class="cab-sec">
+        <h3 class="cab-title"><span class="d-tab">叁</span>人 &amp; 猫 MBTI</h3>
+        <div class="d-sec human-cat">
+          <p class="hc-sub">猫猫学专家帮你更好"拿捏"ta</p>
+          <p class="d-text">你做一版 3 分钟人类 MBTI 快测，结合 TA 的喵格，出一份双向适配报告：谁在驯服谁、雷区在哪里、怎么讨好最有效。</p>
+          <button class="stamp-btn small" id="btn-humancat">申请解锁 · ¥19.9</button>
+          <p class="tiny center" id="humancat-tip"></p>
+        </div>
+      </div>
+
       <footer class="foot">同一只猫可重新建档 · 档案保存在本机浏览器</footer>
     </div>
 
@@ -202,10 +244,6 @@
         <div class="bureau-rule"></div>
       </header>
       <section class="dossier">
-        <div class="d-sec">
-          <h3><span class="d-tab">阅</span>调阅记录</h3>
-          <p class="d-text">付费通道开放后，你调阅的深度档案和人格写真照会归档在这里。</p>
-        </div>
         <div class="d-sec">
           <h3><span class="d-tab">研</span>科学依据</h3>
           <p class="d-text">观察项参考猫科动物人格研究「Feline Five」五维模型（Litchfield et al., 2017，基于 2,802 只猫的行为数据），结合 MBTI 框架做娱乐化改编。比星座科学一点，比论文好玩很多。</p>
@@ -235,7 +273,23 @@
     <div class="modal-inner" id="modal-inner"></div>
   </div>
 
+  <!-- 分享档案照弹窗 -->
+  <div class="modal" id="share-modal">
+    <div class="modal-inner share-inner">
+      <button class="modal-close" id="share-close">✕</button>
+      <div class="dict-title" style="text-align:center;margin-bottom:10px">分享档案照</div>
+      <div class="share-canvas-wrap"><canvas id="share-canvas"></canvas></div>
+      <div class="share-btns">
+        <button class="stamp-btn small" id="btn-save-share">保存档案照</button>
+        <button class="stamp-btn small alt" id="btn-upgrade-share">升级档案照</button>
+      </div>
+      <p class="tiny center">升级：根据 <b id="share-cat-name"></b> 的照片，AI 生成专属人格写真</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
   <script src="../cats.js"></script>
+  <script src="../pairing.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

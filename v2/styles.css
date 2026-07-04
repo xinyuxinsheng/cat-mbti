@@ -978,6 +978,252 @@ body {
   margin: 18px 0 14px;
 }
 
+/* ============ 分享档案照 ============ */
+.share-cta {
+  text-align: center;
+  margin: 16px 0 26px;
+}
+.share-cta .stamp-btn { width: auto; display: inline-block; padding: 13px 34px; margin-top: 0; }
+.idc-rare { color: var(--red) !important; font-weight: 700; }
+
+.share-inner { max-width: 400px; }
+.share-canvas-wrap {
+  border: 2px solid var(--ink);
+  box-shadow: 3px 3px 0 rgba(47, 38, 28, 0.18);
+  margin-bottom: 14px;
+  max-height: 56vh;
+  overflow-y: auto;
+}
+.share-canvas-wrap canvas { width: 100%; height: auto; display: block; }
+.share-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.share-btns .stamp-btn {
+  flex: 1;
+  margin-top: 0;
+  font-size: 15px;
+  letter-spacing: 2px;
+  text-indent: 2px;
+  padding: 11px 6px;
+  white-space: nowrap;
+}
+.stamp-btn.alt {
+  background: var(--ink);
+  border-color: #17110b;
+  box-shadow: inset 0 0 0 2px rgba(244, 234, 210, 0.4), 4px 4px 0 rgba(47, 38, 28, 0.25);
+}
+
+/* 机密档案高亮提醒 */
+.d-locked.flash { animation: lockFlash 1.2s ease 2; }
+@keyframes lockFlash {
+  0%, 100% { box-shadow: 4px 4px 0 rgba(47, 38, 28, 0.12); }
+  50% { box-shadow: 0 0 0 5px rgba(178, 58, 44, 0.35); }
+}
+
+/* ============ 档案柜分区 ============ */
+.cab-sec { margin-bottom: 30px; }
+.cab-title {
+  font-family: var(--font-head);
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.paid-badge, .friend-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 1.5px 6px;
+  border-radius: 2px;
+  vertical-align: 2px;
+  margin-left: 4px;
+}
+.paid-badge {
+  color: #fff;
+  background: var(--red);
+}
+.friend-badge {
+  color: var(--blue);
+  border: 1.5px solid var(--blue);
+}
+
+.friends-empty {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.35);
+  border: 2px dashed var(--line);
+  border-radius: 4px;
+  padding: 24px 16px;
+}
+.friends-empty p {
+  font-size: 13.5px;
+  line-height: 2;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+.friends-empty .stamp-btn { width: auto; display: inline-block; }
+
+/* ============ 两猫对比 ============ */
+.compare-box {
+  margin-top: 16px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 16px;
+  box-shadow: 4px 4px 0 rgba(47, 38, 28, 0.12);
+}
+.compare-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.compare-row select {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  border-bottom: 2px dashed var(--ink-soft);
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--blue);
+  padding: 6px 2px;
+  outline: none;
+  -webkit-appearance: none;
+}
+.compare-row .vs {
+  font-family: var(--font-head);
+  font-size: 16px;
+  color: var(--red);
+  flex: 0 0 auto;
+}
+.compare-box .stamp-btn { width: 100%; }
+
+.cr-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 18px 0 10px;
+}
+.cr-cat { flex: 1; text-align: center; min-width: 0; }
+.cr-cat b {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cr-cat .mono { font-size: 11px; color: var(--red); font-weight: 700; }
+.cr-svg {
+  width: 66px; height: 66px;
+  margin: 0 auto 4px;
+  background: #fff;
+  border: 2px solid var(--ink);
+}
+.cr-svg svg { width: 100%; height: 100%; }
+.cr-score { flex: 0 0 auto; text-align: center; }
+.cr-score b {
+  display: block;
+  font-family: var(--mono);
+  font-size: 30px;
+  color: var(--red);
+}
+.cr-score span { font-size: 10px; color: var(--ink-soft); letter-spacing: 2px; }
+.cr-title {
+  font-family: var(--font-head);
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.cr-line {
+  font-family: var(--font-seal);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--blue);
+  background: rgba(255, 255, 255, 0.5);
+  border-left: 3px solid var(--blue);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+.cr-dims {
+  border: 1.5px solid var(--line);
+  margin-bottom: 14px;
+}
+.cr-dim {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  font-size: 13px;
+  border-bottom: 1px dashed var(--line);
+}
+.cr-dim:last-child { border-bottom: none; }
+.cr-dim .k {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--ink-soft);
+  flex: 0 0 52px;
+}
+.cr-dim .mono { flex: 1; text-align: center; font-weight: 700; }
+.cr-tag {
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1.5px 8px;
+  border-radius: 999px;
+  letter-spacing: 1px;
+}
+.cr-tag.same { color: #3d7a55; border: 1.5px solid #3d7a55; }
+.cr-tag.diff { color: var(--red); border: 1.5px solid var(--red); }
+.cr-locked {
+  border-top: 2px dashed rgba(178, 58, 44, 0.4);
+  padding-top: 12px;
+}
+
+/* 人 & 猫 MBTI */
+.human-cat { text-align: center; }
+.human-cat .hc-sub {
+  font-family: var(--font-seal);
+  font-size: 19px;
+  color: var(--red);
+  margin-bottom: 8px;
+}
+.human-cat .d-text { text-align: left; margin-bottom: 4px; }
+.human-cat .stamp-btn { width: auto; display: inline-block; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 92px;
+  transform: translateX(-50%) translateY(14px);
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 13.5px;
+  letter-spacing: 1px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: 1.5px solid #17110b;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 2000;
+  max-width: 86vw;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
 @media (max-width: 400px) {
   .bureau-name { font-size: 28px; letter-spacing: 7px; }
   .folder h1 { font-size: 26px; }
