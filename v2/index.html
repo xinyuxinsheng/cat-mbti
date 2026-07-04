@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>喵格研究所 · 猫咪人格档案</title>
-  <meta name="description" content="24 项行为观察，16 种喵格判定，给你家主子发一张官方认证的「猫咪人格证」。">
+  <title>喵格研究所 · 猫咪MBTI人格档案</title>
+  <meta name="description" content="猫咪MBTI测试：24 项行为观察，16 型 MBTI 判定，给你家主子核发一张盖章认证的《猫咪MBTI人格证》。">
   <meta name="theme-color" content="#f4ead2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,21 +15,22 @@
 
   <div class="app">
 
-    <!-- ============ 受理大厅 ============ -->
+    <!-- ============ 建档大厅 ============ -->
     <div class="view active" id="view-landing">
 
       <header class="bureau-head">
         <div class="bureau-emblem">🐾</div>
         <div class="bureau-name">喵格研究所</div>
-        <div class="bureau-sub">MEOW PERSONALITY BUREAU · EST. 2026</div>
+        <div class="bureau-sub">CAT · MBTI · BUREAU · EST. 2026</div>
         <div class="bureau-rule"></div>
       </header>
 
       <div class="folder">
         <div class="folder-tab">受理窗口 · No.1</div>
         <div class="folder-body">
-          <h1>给你家主子<br>建一份<span class="hl">人格档案</span></h1>
-          <p class="lead">24 项行为观察 → 16 种喵格判定<br>核发一张盖章认证的《猫咪人格证》</p>
+          <div class="mbti-chip">猫咪 MBTI 测试</div>
+          <h1>给你家主子<br>建一份 <span class="hl">MBTI 档案</span></h1>
+          <p class="lead">24 项行为观察 → 16 型猫咪 MBTI 判定<br>核发一张盖章认证的《猫咪MBTI人格证》</p>
 
           <div class="form-row">
             <label>猫咪姓名</label>
@@ -62,8 +63,8 @@
       </div>
 
       <section class="wall">
-        <h2>—— 在档喵格 · 共 16 类 ——</h2>
-        <p class="wall-sub">点击档案照可调阅简况</p>
+        <h2>—— 在档喵格 · 16 型 MBTI ——</h2>
+        <p class="wall-sub">你家主子是哪一型？点击档案照可调阅简况</p>
         <div class="wall-grid" id="wall-grid"></div>
       </section>
 
@@ -93,11 +94,11 @@
 
       <div class="issue-line">▼ 档案审核通过 · 现予核发 ▼</div>
 
-      <!-- 猫咪人格证 -->
+      <!-- 猫咪MBTI人格证 -->
       <div class="id-card" id="id-card">
         <div class="idc-head">
-          <span class="idc-title">猫咪人格证</span>
-          <span class="idc-en">MEOW PERSONALITY CERTIFICATE</span>
+          <span class="idc-title">猫咪MBTI人格证</span>
+          <span class="idc-en">MEOW MBTI CERTIFICATE</span>
         </div>
         <div class="idc-body">
           <div class="idc-photo">
@@ -107,7 +108,7 @@
           <div class="idc-fields">
             <div class="idc-row"><span class="k">姓 名</span><b id="idc-name"></b></div>
             <div class="idc-row"><span class="k">喵 格</span><b class="idc-type" id="idc-type"></b></div>
-            <div class="idc-row"><span class="k">代 码</span><b id="idc-code" class="mono"></b></div>
+            <div class="idc-row"><span class="k">MBTI</span><b id="idc-code" class="mono idc-mbti"></b></div>
             <div class="idc-row"><span class="k">派 系</span><b id="idc-group"></b></div>
             <div class="idc-row"><span class="k">登 记</span><b id="idc-date" class="mono"></b></div>
           </div>
@@ -132,7 +133,7 @@
           <ul class="d-quotes" id="r-quotes"></ul>
         </div>
         <div class="d-sec">
-          <h3><span class="d-tab">叁</span>评定量表</h3>
+          <h3><span class="d-tab">叁</span>MBTI 评定量表</h3>
           <div class="d-dims" id="dim-bars"></div>
         </div>
         <div class="d-sec">
@@ -147,15 +148,28 @@
           <p class="d-text" id="r-match"></p>
         </div>
 
-        <!-- 机密档案（付费位） -->
+        <!-- 机密档案（付费位 + 样章试阅） -->
         <div class="d-sec d-locked">
           <div class="locked-band">机 密 · CLASSIFIED</div>
           <h3>🔒 深度档案 · 待调阅</h3>
+
+          <div class="preview-label">—— 样 章 试 阅 ——</div>
+
+          <div class="dict-title">《行为翻译词典》节选</div>
+          <div id="dict-entries"></div>
+          <div class="dict-more">…… 其余 10 条注解已加密，调阅后解密</div>
+
+          <div class="dict-title" style="margin-top:22px">《人格写真照》样例 · 三视图特摄</div>
+          <div class="mugshots" id="mugshots"></div>
+          <div class="feature-table" id="feature-table"></div>
+          <p class="tiny">▲ 样例为档案简笔画示意 · 正式版上传照片后，由 AI 生成<b>本猫出镜</b>的写实三视图特摄</p>
+
+          <div class="locked-divider"></div>
           <ul class="locked-list">
-            <li>▪ 行为翻译词典——每个迷惑行为的档案注解</li>
+            <li>▪ 行为翻译词典——完整 12 条档案注解</li>
             <li>▪ 相处红黑榜——对它的禁忌事项清单</li>
             <li>▪ 喂养环境建议——按喵格布置的生活方案</li>
-            <li>▪ AI 写实肖像——本猫出镜的电影级档案照</li>
+            <li>▪ 人格写真照——本猫出镜的三视图特摄（含 1 次重拍）</li>
           </ul>
           <button class="stamp-btn small" id="btn-unlock">申请调阅 · ¥9.9</button>
           <p class="tiny center" id="unlock-tip"></p>
@@ -167,7 +181,54 @@
       </div>
       <footer class="foot">喵格研究所 · 鉴定结果偏娱乐，请配合猫条食用</footer>
     </div>
+
+    <!-- ============ 档案柜 ============ -->
+    <div class="view" id="view-archive">
+      <header class="bureau-head small-head">
+        <div class="bureau-name" style="font-size:26px">档 案 柜</div>
+        <div class="bureau-sub">FILE CABINET</div>
+        <div class="bureau-rule"></div>
+      </header>
+      <p class="cabinet-progress" id="cabinet-progress"></p>
+      <div id="cabinet-list"></div>
+      <footer class="foot">同一只猫可重新建档 · 档案保存在本机浏览器</footer>
+    </div>
+
+    <!-- ============ 我的 ============ -->
+    <div class="view" id="view-mine">
+      <header class="bureau-head small-head">
+        <div class="bureau-name" style="font-size:26px">研 究 员</div>
+        <div class="bureau-sub">MY OFFICE</div>
+        <div class="bureau-rule"></div>
+      </header>
+      <section class="dossier">
+        <div class="d-sec">
+          <h3><span class="d-tab">阅</span>调阅记录</h3>
+          <p class="d-text">付费通道开放后，你调阅的深度档案和人格写真照会归档在这里。</p>
+        </div>
+        <div class="d-sec">
+          <h3><span class="d-tab">研</span>科学依据</h3>
+          <p class="d-text">观察项参考猫科动物人格研究「Feline Five」五维模型（Litchfield et al., 2017，基于 2,802 只猫的行为数据），结合 MBTI 框架做娱乐化改编。比星座科学一点，比论文好玩很多。</p>
+        </div>
+        <div class="d-sec">
+          <h3><span class="d-tab">密</span>隐私说明</h3>
+          <p class="d-text">你填写的猫咪信息与答题记录仅保存在本机设备，不上传任何服务器。写真照功能上线后，将在上传照片前另行征得同意。</p>
+        </div>
+        <div class="d-sec">
+          <h3><span class="d-tab">函</span>联系与反馈</h3>
+          <p class="d-text">有想法或发现 bug？欢迎来函，帮喵格研究所变得更好。</p>
+        </div>
+      </section>
+      <footer class="foot">喵格研究所 v2 · CONCEPT</footer>
+    </div>
   </div>
+
+  <!-- 底部 Tab -->
+  <nav class="tabbar" id="tabbar">
+    <button class="tab-btn active" data-view="landing"><span class="tab-icon">🐾</span>建档大厅</button>
+    <button class="tab-btn" data-view="archive"><span class="tab-icon">🗂</span>档案柜</button>
+    <button class="tab-btn" data-view="mine"><span class="tab-icon">🪪</span>我的</button>
+  </nav>
 
   <!-- 档案简况弹窗 -->
   <div class="modal" id="type-modal">
