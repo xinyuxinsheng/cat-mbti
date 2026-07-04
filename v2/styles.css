@@ -1647,6 +1647,49 @@ body {
 }
 .fr-photo:hover .fp-go { color: var(--red); }
 
+/* ============ 内容库拼装块 ============ */
+.cblock {
+  background: rgba(255, 255, 255, 0.5);
+  border-left: 3px solid var(--ink-soft);
+  padding: 10px 12px;
+  margin-bottom: 9px;
+  text-align: left;
+}
+.unlocked-box .care-list, .unlocked-box .weekly-line { text-align: left; }
+.cblock h5 {
+  font-family: var(--font-head);
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 5px;
+}
+.cblock p {
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--ink);
+}
+.sci {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px dashed rgba(111, 92, 68, 0.3);
+}
+.sci-ref {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+  opacity: 0.8;
+}
+.weekly-line {
+  font-family: var(--font-seal);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+
 /* Toast */
 .toast {
   position: fixed;

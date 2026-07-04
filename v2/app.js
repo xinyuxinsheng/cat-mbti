@@ -35,136 +35,39 @@
     ESFJ: 6, ESTP: 5, ENFP: 5, INTJ: 4, ESTJ: 4, ENFJ: 3, ENTP: 2, ENTJ: 2,
   };
 
-  // --- 《行为翻译词典》样章（每型 2 条，第 2 条半加密展示） ---
-  const DEEP_PREVIEW = {
-    ESTJ: [
-      ['清晨准点踩脸叫早', '不是饿疯了，是在执行考勤制度——你迟到了，罚你铲屎两次。'],
-      ['占领你刚起身的椅子', '权力交接仪式。这个家的每一寸领土，都需要它的批示。'],
-    ],
-    ISTJ: [
-      ['蹲在门口目送你出门', '例行安检：确认你带齐了钥匙、手机，和对它的思念。'],
-      ['半夜挨个房间巡逻', '值夜班。水电门窗全部查完，才允许自己下班睡觉。'],
-    ],
-    ESFJ: [
-      ['吃两口就优雅离席', '不是不饿，是这顿的摆盘配不上它的身份。'],
-      ['主动走向客人又拒绝抚摸', '这叫检阅仪仗队。谁允许你伸手了？'],
-    ],
-    ISFJ: [
-      ['从高处长时间注视你', '在做田野笔记：人类行为观察样本，第 1024 条。'],
-      ['对新家具反复嗅闻绕圈', '入库登记中。气味归档完成前，不算验收通过。'],
-    ],
-    ESTP: [
-      ['拆完快递还要钻进箱子', '现场勘查。每一个纸箱都必须由它亲自结案。'],
-      ['追着吸尘器跑而不是逃', '抵近侦察。危险源要建档跟踪，不能放任自流。'],
-    ],
-    ISTP: [
-      ['消失一下午遍寻不获', '在你不知道的第五空间闭关。别找了，时辰到自会现身。'],
-      ['凌晨对着空气凝视', '它看到了什么，档案里不让写。'],
-    ],
-    ESFP: [
-      ['你越不让上桌它越要上', '禁令在它的字典里，翻译过来叫"邀请函"。'],
-      ['打翻水杯后直视你的眼睛', '行为艺术表演完毕，正在等待掌声。'],
-    ],
-    ISFP: [
-      ['你走到哪跟到哪，包括厕所', '贴身护卫值勤中。人类独处，太危险了。'],
-      ['摔倒后立刻舔毛装没事', '档案记录：刚才是主动翻滚训练，不是失误。'],
-    ],
-    INTJ: [
-      ['盯着水龙头滴水半小时', '流体力学定点观测，实验数据即将发表。'],
-      ['用爪子把东西缓缓推下桌', '重力对照实验第 47 次。结论：依然成立。'],
-    ],
-    INTP: [
-      ['客人来就消失，人走就出现', '陌生人类未通过它的安全审查，回避是标准流程。'],
-      ['深夜轻轻靠上你的脚边', '信任等级 MAX 的最高表达。请勿声张，会害羞。'],
-    ],
-    ENTJ: [
-      ['凌晨五点准时嚎叫', '不是饿，是晨会点名。全体起立。'],
-      ['挡在你和电脑屏幕之间', '议程变更通知：现在开始是朕的专属时间。'],
-    ],
-    ENTP: [
-      ['打翻杯子后用无辜眼神看你', '档案原话："是我干的，但你没有证据。"'],
-      ['连续三天研究柜门锁', '越狱预备行为，证据确凿，但无法起诉。'],
-    ],
-    INFJ: [
-      ['对着毛毯疯狂踩奶', '在给你烤一炉看不见的面包，火候正要紧，勿扰。'],
-      ['你情绪低落时默默贴过来', '治愈型人格自动上岗。不说话，但它都懂。'],
-    ],
-    INFP: [
-      ['对着墙壁发呆一小时', '神游宇宙中，请勿打扰。它的世界你进不去。'],
-      ['闻到猫薄荷后满场疯跑', '档案注解：短暂离开地球表面，属正常现象。'],
-    ],
-    ENFJ: [
-      ['精准挡住你正在看的屏幕', '这叫加戏。主角光环怎么能让给一块发光的板子。'],
-      ['翻出肚皮却不许你摸', '演出效果而已。观众请保持距离，鼓掌即可。'],
-    ],
-    ENFP: [
-      ['追自己的尾巴直到晕倒', '每日喜剧专场。跌倒不是事故，是节目效果。'],
-      ['从柜顶离奇坠落', '特技演员不需要保护措施，只需要观众。'],
-    ],
-  };
+  // 《行为翻译词典》数据已迁移至 content.js 的 DEEP_CONTENT（每型 12 条，含科学注脚）
+  // 样章试阅 = 取前 2 条，第 2 条半加密展示
 
-  // --- 解锁后内容生成器（按 MBTI 字母规则生成，全部确定性） ---
-  const CARE_TIPS = {
-    E: '家里来客让它参与互动，它自认是主陪，别晾着它',
-    I: '给它保留一个不被打扰的高处或纸箱，客人来访前打开"避难通道"',
-    N: '玩具每周轮换，快递纸箱多留三天，探索欲需要出口',
-    S: '家具布局尽量稳定，要变动前先让它闻过再动',
-    T: '碗、窝、猫抓板独立配置不共用，投喂准时——仪式感就是它的安全感',
-    F: '每天固定一段温柔抚摸时间，多用轻声交流，它吃软不吃硬',
-    J: '定点喂食，误差控制在半小时内，作息被打乱要加倍补偿陪伴',
-    P: '准备多样玩具轮着来防止腻，接受它的即兴发挥',
-  };
-  const RED_TIPS = {
-    E: '让它参与家庭活动，它最讨厌被排除在外',
-    I: '尊重它的独处时间，等它主动靠近再互动',
-    S: '保持环境可预测，它就还你稳定的情绪',
-    N: '给它留探索空间，柜顶不该是禁区',
-    T: '承认它的地位，第一口罐头永远先给它',
-    F: '睡前的抚摸仪式，是它一天的期待',
-    J: '它的时间表比你的闹钟准，跟着它走',
-    P: '陪它疯，别管章法',
-  };
-  const BLACK_TIPS = {
-    E: '别长时间独留它在家，它真的会郁闷',
-    I: '别强行把它抱出来见客',
-    S: '别频繁挪动它的碗和猫砂盆',
-    N: '别买了猫爬架又不许它上柜顶',
-    T: '别徒手抢它的玩具或食物——会挂彩',
-    F: '别大声呵斥，它会记仇很久',
-    J: '别随意打乱它的作息，小心报复性拆家',
-    P: '别指望它对一个玩具从一而终',
-  };
+  // --- 付费内容库拼装引擎（内容见 content.js，规则见 docs/content/assembly-rules.md） ---
 
-  function conflictLines(a, b) {
-    const lines = [];
-    if (a[2] === 'T' && b[2] === 'T') lines.push('两只都要当老大，资源是主要火药桶——碗、窝、猫砂盆全部双份并拉开距离');
-    else if (a[2] !== b[2]) lines.push('强势一方会试探性压制，留意温和方是否长期躲藏、食欲下降');
-    else lines.push('双温和组合，冲突概率低——偶尔追逐多是游戏，尾巴炸毛才需要介入');
-    if (a[0] === 'E' && b[0] === 'E') lines.push('双外向精力旺盛，深夜跑酷可能升级成群架，睡前放电很重要');
-    if (a[3] !== b[3]) lines.push('作息不同步：规律方的午睡常被随性方偷袭，给规律方留一个高处避难所');
-    return lines;
-  }
-  function peaceLines(a, b) {
-    const lines = [
-      '资源 N+1 原则：猫砂盆、水碗数量 = 猫的数量 + 1',
-      '垂直分层：一只柜顶、一只窝，视线错开就是和平',
-    ];
-    if (a[1] === 'N' || b[1] === 'N') lines.push('探索型猫领地欲更强，新物件先给它检阅，再开放共享');
-    return lines;
+  // 科学注脚：经验共识不显示编号；science 本身为共识占位时不渲染
+  const refTag = r => (r && !/co|共识/.test(String(r))) ? ` <span class="sci-ref">${r}</span>` : '';
+  function sciNote(science, ref) {
+    if (!science || /共识/.test(science)) return '';
+    return `<div class="sci">🔬 ${science}${refTag(ref)}</div>`;
   }
 
-  function hcAnalysis(h, c) {
-    let power;
-    if (c[2] === 'T' && h[2] === 'F') power = '它是决策层，你是执行层。好消息是——它对听话的执行层向来大方。';
-    else if (h[2] === 'T' && c[2] === 'F') power = '表面上你说了算，实际上它用温柔让你心甘情愿地加班伺候，这叫软性执政。';
-    else if (h[2] === 'T' && c[2] === 'T') power = '双强势组合，日常上演宫斗剧。记住：谁先低头蹭谁，谁就赢了。';
-    else power = '双温和组合，没有权力斗争，只有互相迁就的岁月静好。';
-    const mines = [BLACK_TIPS[c[1]], BLACK_TIPS[c[2]]];
-    const tips = [
-      c[0] === 'E' ? '多陪它玩追逐游戏——它要的是互动，不是零食' : '安静地坐在它附近各干各的，是它认可的最高级陪伴',
-      c[3] === 'J' ? '投喂准时，仪式感就是它的命' : '随它的节奏来——它想玩的时候你在场，就够了',
-    ];
-    return { power, mines, tips };
+  // when 规则求值：原子 X.L / X.L!=Y.L，连接 && ||，'always' 恒真
+  const LPOS = { E: 0, I: 0, S: 1, N: 1, T: 2, F: 2, J: 3, P: 3 };
+  function evalWhenOnce(when, a, b) {
+    if (!when || when === 'always') return true;
+    const sub = s => (s === 'A' || s === 'human') ? a : b;
+    const expr = when.replace(/\s+/g, '')
+      .replace(/(A|B|human|cat)\.([EISNTFJP])!=(A|B|human|cat)\.([EISNTFJP])/g,
+        (m, s1, l1, s2, l2) => (sub(s1)[LPOS[l1]] !== sub(s2)[LPOS[l2]]) ? '1' : '0')
+      .replace(/(A|B|human|cat)\.([EISNTFJP])/g,
+        (m, s, l) => (sub(s)[LPOS[l]] === l) ? '1' : '0');
+    if (!/^[01&|()]+$/.test(expr)) return false;
+    try { return !!(new Function('return ' + expr))(); } catch (e) { return false; }
+  }
+  // 两猫规则对称（A/B 互换也算命中）；人猫不对称
+  const evalPair = (when, a, b) => evalWhenOnce(when, a, b) || evalWhenOnce(when, b, a);
+  const atomCount = when => (String(when).match(/\./g) || []).length;
+
+  const DIM_NAMES = { EI: '社交性', SN: '好奇心', TF: '支配性', JP: '规律性' };
+  const DIM_IDX = { EI: 0, SN: 1, TF: 2, JP: 3 };
+  function contentBlock(title, text, science, ref) {
+    return `<div class="cblock"><h5>${title}</h5><p>${text}</p>${sciNote(science, ref)}</div>`;
   }
 
   // --- Views & Tabbar ---
@@ -447,7 +350,8 @@
   // 样章试阅 + 人格写真照样例（含已解密状态）
   function renderDeepPreview() {
     const t = resultType;
-    const entries = DEEP_PREVIEW[t.code] || [];
+    const cc = DEEP_CONTENT[t.code] || {};
+    const entries = cc.dictionary || [];
     const paid = isPaidCurrent();
 
     // —— 状态复位/切换 ——
@@ -457,8 +361,8 @@
     document.getElementById('locked-title').innerHTML = paid ? '🔓 深度档案 · 已解密' : '🔒 深度档案 · 待调阅';
     document.getElementById('preview-label').textContent = paid ? '—— 完 整 档 案 ——' : '—— 样 章 试 阅 ——';
     document.getElementById('dict-more').textContent = paid
-      ? '✓ 已解密 · 完整 12 条注解正式版持续补充中'
-      : '…… 其余 10 条注解已加密，调阅后解密';
+      ? `✓ 完整 ${entries.length} 条档案注解 · 已全部解密`
+      : `…… 其余 ${Math.max(entries.length - 2, 0)} 条注解已加密，解密后全部展开`;
     document.getElementById('mug-note').innerHTML = paid
       ? '<button class="stamp-btn small" id="btn-goto-photo" style="width:100%">📷 进入写真棚 · 生成本猫写真</button>'
       : '▲ 样例为档案简笔画示意 · 正式版上传照片后，由 AI 生成<b>本猫出镜</b>的写实三视图特摄';
@@ -473,29 +377,29 @@
     fbDeep.innerHTML = paid ? '深度档案 · 已解密 ✓' : '解密档案 ¥9.9 <s>¥39.9</s>';
     fbDeep.classList.toggle('done', paid);
 
-    // —— 已解密：追加红黑榜 + 喂养建议 ——
+    // —— 已解密：追加红黑榜 + 喂养建议（内容库 · 含科学注脚） ——
     const extra = document.getElementById('deep-extra');
     if (paid) {
-      const c = t.code;
-      const reds = [RED_TIPS[c[0]], RED_TIPS[c[3]]];
-      const blacks = [BLACK_TIPS[c[1]], BLACK_TIPS[c[2]]];
-      const cares = [...c].map(l => CARE_TIPS[l]);
+      const li = arr => (arr || []).map(x => `<li>${x.tip}${refTag(x.ref)}</li>`).join('');
       extra.innerHTML = `
         <div class="dict-title" style="margin-top:22px">《相处红黑榜》</div>
         <div class="rb-grid">
-          <div class="rb red"><h5>✓ 红榜 · 多做</h5><ul>${reds.map(x => `<li>${x}</li>`).join('')}</ul></div>
-          <div class="rb black"><h5>✗ 黑榜 · 别碰</h5><ul>${blacks.map(x => `<li>${x}</li>`).join('')}</ul></div>
+          <div class="rb red"><h5>✓ 红榜 · 多做</h5><ul>${li(cc.red)}</ul></div>
+          <div class="rb black"><h5>✗ 黑榜 · 别碰</h5><ul>${li(cc.black)}</ul></div>
         </div>
         <div class="dict-title" style="margin-top:18px">《喂养环境建议》</div>
-        <ul class="care-list">${cares.map(x => `<li>🐾 ${x}</li>`).join('')}</ul>`;
+        <ul class="care-list">${(cc.care || []).map(x => `<li>🐾 ${x.tip}${refTag(x.ref)}</li>`).join('')}</ul>`;
     } else {
       extra.innerHTML = '';
     }
 
-    document.getElementById('dict-entries').innerHTML = entries.map(([b, note], i) => `
+    // 词典：未解密显示前 2 条（第 2 条半加密），已解密全部展开
+    const show = paid ? entries : entries.slice(0, 2);
+    document.getElementById('dict-entries').innerHTML = show.map((e, i) => `
       <div class="dict-entry${!paid && i === 1 ? ' faded' : ''}">
-        <div class="de-b">▸ 观察到的行为：${b}</div>
-        <div class="de-t">档案注解：${note}</div>
+        <div class="de-b">▸ 观察到的行为：${e.behavior}</div>
+        <div class="de-t">档案注解：${e.note}</div>
+        ${(!paid && i === 1) ? '' : sciNote(e.science, e.ref)}
       </div>`).join('');
 
     // 已解密：写真棚入口
@@ -966,16 +870,47 @@
       <div class="cr-title">「${pair.title}」</div>
       <p class="cr-line">${pair.line}</p>`;
 
-    const deepBody = unlocked
-      ? `<div class="cr-locked unlocked-box">
+    // 已开通：按 assembly-rules 从内容库拼装（维度4块 + 冲突3~4 + 和平4）
+    let unlockedBody = '';
+    if (unlocked) {
+      const A = ca.code, B = cb.code;
+      const dimBlocks = ['EI', 'SN', 'TF', 'JP'].map(k => {
+        const i = DIM_IDX[k];
+        const key = A[i] === B[i] ? A[i] + A[i] : 'MIX';
+        const d = (CMP_CONTENT.dims[k] || {})[key];
+        return d ? contentBlock(`${DIM_NAMES[k]} · ${d.title}`, d.text, d.science, d.ref) : '';
+      }).join('');
+
+      const cHits = CMP_CONTENT.conflict.filter(x => evalPair(x.when, A, B));
+      const cPick = [
+        ...cHits.filter(x => x.when !== 'always')
+          .sort((x, y) => atomCount(y.when) - atomCount(x.when)).slice(0, 3),
+        ...cHits.filter(x => x.when === 'always'),
+      ];
+      const conflictBlocks = cPick.map(x => contentBlock('⚡ ' + x.title, x.text, x.science, x.ref)).join('');
+
+      const pHits = CMP_CONTENT.peace.filter(x => evalPair(x.when, A, B));
+      const pCond = pHits.filter(x => x.when !== 'always').slice(0, 2);
+      const pAlw = pHits.filter(x => x.when === 'always')
+        .sort((x, y) => (['p1', 'p10'].includes(y.id) ? 1 : 0) - (['p1', 'p10'].includes(x.id) ? 1 : 0));
+      const pPick = [...pCond, ...pAlw].slice(0, 4);
+      const peaceBlocks = pPick.map(x => contentBlock('🕊 ' + x.title, x.text, x.science, x.ref)).join('');
+
+      unlockedBody = `<div class="cr-locked unlocked-box">
           <div class="dict-title">🔓 深度解读 · 已开通</div>
           <div class="cr-dims">${dimRows}</div>
-          <div class="dict-title" style="margin-top:14px">⚡ 冲突预警</div>
-          <ul class="care-list">${conflictLines(ca.code, cb.code).map(x => `<li>▪ ${x}</li>`).join('')}</ul>
-          <div class="dict-title" style="margin-top:14px">🕊 和平共处指南</div>
-          <ul class="care-list">${peaceLines(ca.code, cb.code).map(x => `<li>▪ ${x}</li>`).join('')}</ul>
+          <div class="dict-title" style="margin-top:16px">📖 维度对比详解</div>
+          ${dimBlocks}
+          <div class="dict-title" style="margin-top:16px">⚡ 冲突预警</div>
+          ${conflictBlocks}
+          <div class="dict-title" style="margin-top:16px">🕊 和平共处指南</div>
+          ${peaceBlocks}
           <p class="tiny center unlock-done">已开通 · 无限次对比 ✓</p>
-        </div>`
+        </div>`;
+    }
+
+    const deepBody = unlocked
+      ? unlockedBody
       : `<div class="cr-locked">
           <div class="dict-title">🔒 深度解读 · 待开通</div>
           <div class="blur-lock"><div class="cr-dims">${dimRows}</div></div>
@@ -1049,16 +984,37 @@
 
     let body;
     if (unlocked) {
-      const a = hcAnalysis(h, c);
+      // 按 assembly-rules 拼装：维度4块 + 权力1~2 + 雷区/讨好聚合 + 一周名场面≤2
+      const dimBlocks = ['EI', 'SN', 'TF', 'JP'].map(k => {
+        const i = DIM_IDX[k];
+        const d = (HC_CONTENT.dims[k] || {})[`${h[i]}-${c[i]}`];
+        return d ? contentBlock(`${DIM_NAMES[k]} · ${d.title}`, d.text, d.science, d.ref) : '';
+      }).join('');
+
+      const powHits = HC_CONTENT.power.filter(x => evalWhenOnce(x.when, h, c));
+      const primary = powHits.find(x => /\.(T|F)/.test(x.when) && atomCount(x.when) === 2);
+      const secondary = powHits.filter(x => x !== primary)
+        .sort((x, y) => atomCount(y.when) - atomCount(x.when))[0];
+      const powerBlocks = [primary, secondary].filter(Boolean)
+        .map(x => contentBlock('👑 ' + x.title, x.text, x.science, x.ref)).join('');
+
+      const gather = pool => [...c].flatMap(L => ((pool || {})[L] || []).slice(0, 2));
+      const bullets = arr => `<ul class="care-list">${arr.map(x => `<li>▪ ${x.tip}${refTag(x.ref)}</li>`).join('')}</ul>`;
+      const weekly = (HC_CONTENT.weekly || []).filter(x => evalWhenOnce(x.when, h, c)).slice(0, 2);
+
       body = `
         <div class="cr-locked unlocked-box">
           <div class="dict-title">🔓 完整适配解析 · 已解锁</div>
-          <div class="dict-title" style="margin-top:12px">👑 谁在驯服谁</div>
-          <p class="d-text" style="font-size:13.5px">${a.power}</p>
-          <div class="dict-title" style="margin-top:14px">💣 雷区清单</div>
-          <ul class="care-list">${a.mines.map(x => `<li>▪ ${x}</li>`).join('')}</ul>
-          <div class="dict-title" style="margin-top:14px">🍖 讨好攻略</div>
-          <ul class="care-list">${a.tips.map(x => `<li>▪ ${x}</li>`).join('')}</ul>
+          <div class="dict-title" style="margin-top:12px">📖 四维关系拆解</div>
+          ${dimBlocks}
+          <div class="dict-title" style="margin-top:16px">👑 谁在驯服谁</div>
+          ${powerBlocks}
+          <div class="dict-title" style="margin-top:16px">💣 雷区清单</div>
+          ${bullets(gather(HC_CONTENT.mines))}
+          <div class="dict-title" style="margin-top:16px">🍖 讨好攻略</div>
+          ${bullets(gather(HC_CONTENT.please))}
+          ${weekly.length ? `<div class="dict-title" style="margin-top:16px">📅 一周名场面预测</div>` +
+            weekly.map(w => `<p class="weekly-line">${w.text}</p>`).join('') : ''}
           <p class="tiny center unlock-done">已解锁 · 任意人猫组合可查 ✓</p>
         </div>`;
     } else {
