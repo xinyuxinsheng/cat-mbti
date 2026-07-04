@@ -412,6 +412,9 @@
   const $shareModal = document.getElementById('share-modal');
   document.getElementById('btn-share').addEventListener('click', async () => {
     document.getElementById('share-cat-name').textContent = catName;
+    // 升级前后对比条：左简笔画档案照，右电影光效写真示意
+    document.getElementById('us-now').innerHTML = catSVG(resultType.code);
+    document.getElementById('us-pro').innerHTML = catSVG(resultType.code);
     await drawShareCard();
     $shareModal.classList.add('active');
   });
@@ -808,7 +811,8 @@
           <li>▪ 冲突预警——什么情况会炸毛、谁是挑事的</li>
           <li>▪ 和平共处指南——资源分配与空间布置建议</li>
         </ul>
-        <button class="stamp-btn small" id="btn-script-unlock">开通深度对比 · ¥9.9</button>
+        <div class="price-row"><b>¥9.9</b><s>¥39.9</s><span class="price-tag">限时内测价</span></div>
+        <button class="stamp-btn small" id="btn-script-unlock">解密两猫关系 🔓</button>
         <p class="tiny center">开通后可无限次对比任意两只猫</p>
         <p class="tiny center" id="script-tip"></p>
       </div>`;

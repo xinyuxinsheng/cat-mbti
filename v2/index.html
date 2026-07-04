@@ -174,7 +174,8 @@
             <li>▪ 喂养环境建议——按喵格布置的生活方案</li>
             <li>▪ 人格写真照——本猫出镜的三视图特摄（含 1 次重拍）</li>
           </ul>
-          <button class="stamp-btn small" id="btn-unlock">申请调阅 · ¥9.9</button>
+          <div class="price-row"><b>¥9.9</b><s>¥39.9</s><span class="price-tag">限时内测价</span></div>
+          <button class="stamp-btn small" id="btn-unlock">解密全部档案 🔓</button>
           <p class="tiny center" id="unlock-tip"></p>
         </div>
       </section>
@@ -268,7 +269,7 @@
   <!-- 结果页悬浮操作栏 -->
   <div class="float-bar" id="float-bar" style="display:none">
     <button class="stamp-btn fb" id="btn-share">分享档案照</button>
-    <button class="stamp-btn fb alt" id="btn-deep">深度档案 ¥9.9</button>
+    <button class="stamp-btn fb alt" id="btn-deep">解密档案 ¥9.9 <s>¥39.9</s></button>
   </div>
 
   <!-- 底部 Tab -->
@@ -293,7 +294,18 @@
         <button class="stamp-btn small" id="btn-save-share">保存档案照</button>
         <button class="stamp-btn small alt" id="btn-upgrade-share">升级档案照</button>
       </div>
-      <p class="tiny center">升级：根据 <b id="share-cat-name"></b> 的照片，AI 生成专属人格写真</p>
+      <div class="upgrade-strip">
+        <div class="us-item">
+          <div class="us-thumb now" id="us-now"></div>
+          <span>现在 · 简笔画</span>
+        </div>
+        <div class="us-arrow">➜</div>
+        <div class="us-item">
+          <div class="us-thumb pro" id="us-pro"></div>
+          <span>升级 · AI 写真</span>
+        </div>
+      </div>
+      <p class="tiny center">升级：根据 <b id="share-cat-name"></b> 的照片，AI 生成专属人格写真照，并解锁深度档案</p>
     </div>
   </div>
 

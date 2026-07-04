@@ -1285,6 +1285,95 @@ body {
 .human-cat .d-text { text-align: left; margin-bottom: 4px; }
 .human-cat .stamp-btn { width: auto; display: inline-block; }
 
+/* 价格行（划线价） */
+.price-row {
+  text-align: center;
+  margin: 12px 0 2px;
+}
+.price-row b {
+  font-family: var(--mono);
+  font-size: 27px;
+  color: var(--red);
+  margin-right: 8px;
+}
+.price-row s {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin-right: 8px;
+}
+.price-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+  background: var(--red);
+  padding: 2px 8px;
+  border-radius: 2px;
+  vertical-align: 3px;
+}
+.float-bar .fb s {
+  font-size: 10px;
+  opacity: 0.65;
+  margin-left: 2px;
+}
+
+/* 升级前后对比条 */
+.upgrade-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 14px 0 8px;
+}
+.us-item { text-align: center; }
+.us-item span {
+  display: block;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  letter-spacing: 1px;
+  margin-top: 5px;
+}
+.us-thumb {
+  width: 74px;
+  height: 74px;
+  border: 2px solid var(--ink);
+  position: relative;
+  overflow: hidden;
+}
+.us-thumb svg { width: 100%; height: 100%; }
+.us-thumb.now { background: #fff; }
+.us-thumb.pro {
+  background: radial-gradient(circle at 50% 32%, #6b543a, #17110b 78%);
+  box-shadow: inset 0 0 0 2px rgba(244, 234, 210, 0.25);
+}
+.us-thumb.pro svg {
+  filter: sepia(0.55) saturate(1.5) contrast(1.15) drop-shadow(0 0 7px rgba(255, 200, 120, 0.65));
+}
+.us-thumb.pro::after {
+  content: '✨';
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-size: 12px;
+}
+.us-thumb.pro::before {
+  content: 'AI';
+  position: absolute;
+  bottom: 2px;
+  left: 3px;
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 700;
+  color: #f0d9a8;
+  letter-spacing: 1px;
+  z-index: 1;
+}
+.us-arrow {
+  font-size: 20px;
+  color: var(--red);
+}
+
 /* Toast */
 .toast {
   position: fixed;
