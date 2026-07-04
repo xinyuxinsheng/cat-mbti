@@ -991,9 +991,9 @@ body {
 }
 .dict-entry .de-t {
   font-family: var(--font-seal);
-  font-size: 16px;
+  font-size: 13.5px; /* 注解是氛围，调小 */
   color: var(--blue);
-  line-height: 1.6;
+  line-height: 1.7;
 }
 /* 第二条渐隐加密 */
 .dict-entry.faded {
@@ -1669,11 +1669,11 @@ body {
   color: var(--ink);
 }
 .sci {
-  font-size: 11px;
-  line-height: 1.7;
-  color: var(--ink-soft);
+  font-size: 14px; /* 科学解释用户真的会读，与正文同级、大于注解 */
+  line-height: 1.8;
+  color: var(--ink);
   margin-top: 6px;
-  padding-top: 5px;
+  padding-top: 6px;
   border-top: 1px dashed rgba(111, 92, 68, 0.3);
 }
 .sci-ref {
@@ -1682,6 +1682,33 @@ body {
   color: var(--ink-soft);
   opacity: 0.8;
 }
+/* 我的-科学依据 文献清单 */
+.ref-list {
+  list-style: none;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.ref-list li {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink);
+  padding-left: 14px;
+  position: relative;
+}
+.ref-list li::before {
+  content: '▪';
+  position: absolute;
+  left: 0;
+  color: var(--ink-soft);
+}
+.ref-list i { font-style: italic; color: var(--ink-soft); }
+.ref-note {
+  font-size: 12px !important;
+  color: var(--ink-soft) !important;
+}
+
 .weekly-line {
   font-family: var(--font-seal);
   font-size: 16px;
