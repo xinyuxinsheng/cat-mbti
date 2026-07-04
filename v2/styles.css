@@ -216,6 +216,82 @@ body {
 }
 .tiny.center { text-align: center; }
 
+/* 权威要点徽章 */
+.badge-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: -8px 0 20px;
+}
+.badge {
+  font-size: 10.5px;
+  letter-spacing: 0.5px;
+  color: var(--ink-soft);
+  border: 1.5px solid rgba(111, 92, 68, 0.55);
+  border-radius: 3px;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+}
+
+/* 受理动态走马灯 */
+.ticker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 7px 10px;
+  margin-bottom: 22px;
+  box-shadow: 3px 3px 0 rgba(47, 38, 28, 0.14);
+}
+.ticker-label {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+  background: var(--red);
+  padding: 2.5px 8px;
+  border-radius: 2px;
+}
+.ticker-box {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  height: 19px;
+}
+.ticker-item {
+  font-size: 12.5px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 19px;
+}
+.ticker-item.roll { animation: tickerRoll 0.4s ease; }
+@keyframes tickerRoll {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* 建档计数器 */
+.bureau-count {
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-soft);
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+.bureau-count b {
+  font-family: var(--mono);
+  font-size: 16px;
+  color: var(--red);
+  letter-spacing: 1px;
+}
+
 /* 档案照片墙 */
 .wall h2 {
   font-family: var(--font-head);

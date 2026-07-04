@@ -881,6 +881,68 @@
     });
   });
 
+  // ============ 受理动态走马灯 + 建档计数器 ============
+  // ⚠️ 构造数据（行业常规的氛围组），小程序接入云数据库后切换为真实动态
+
+  (function initTicker() {
+    const NAMES = ['煤球', '年糕', '布丁', '汤圆', '麻薯', '奥利奥', '芝麻', '豆腐',
+      '可乐', '鱼丸', '糯米', '花卷', '馒头', '雪碧', '旺仔', '椰奶',
+      '皮蛋', '包子', '乌龙', '栗子', '小满', '芋泥'];
+    const BREEDS = ['狸花猫', '橘猫', '三花猫', '奶牛猫', '英短', '布偶', '美短', '玄猫'];
+    const RARE_CODES = ['ENTJ', 'ENTP', 'ENFJ', 'INTJ', 'ESTJ'];
+    const PAIR_TITLES = ['天选搭子', '一动一静', '岁月静好', '派对双子星', '镜像猫生'];
+    const CODES = Object.keys(CAT_TYPES);
+    const pick = a => a[Math.floor(Math.random() * a.length)];
+
+    const msgs = [];
+    for (let i = 0; i < 48; i++) {
+      const r = i % 4;
+      if (r === 0) {
+        const c = pick(CODES);
+        msgs.push(`${pick(BREEDS)}「${pick(NAMES)}」测出 ${c} ${CAT_TYPES[c].name}`);
+      } else if (r === 1) {
+        const c = pick(RARE_CODES);
+        msgs.push(`「${pick(NAMES)}」测出稀有猫格 ${c} · 全所仅 ${RARITY[c]}%`);
+      } else if (r === 2) {
+        msgs.push(`「${pick(NAMES)}」的深度档案刚被主子解密了`);
+      } else {
+        const a = pick(NAMES);
+        let b = pick(NAMES);
+        while (b === a) b = pick(NAMES);
+        msgs.push(`「${a}」×「${b}」缘分值 ${85 + Math.floor(Math.random() * 14)} · ${pick(PAIR_TITLES)}`);
+      }
+    }
+    msgs.sort(() => Math.random() - 0.5);
+
+    const el = document.getElementById('ticker-item');
+    let idx = 0;
+    const show = () => {
+      el.textContent = msgs[idx % msgs.length];
+      el.classList.remove('roll');
+      void el.offsetWidth; // 重新触发动画
+      el.classList.add('roll');
+      idx++;
+    };
+    show();
+    setInterval(show, 3000);
+  })();
+
+  (function initCounter() {
+    const el = document.getElementById('bureau-count');
+    const calc = () => {
+      const days = Math.floor((Date.now() - new Date('2026-06-01T00:00:00+08:00').getTime()) / 86400000);
+      const d = new Date();
+      return 236208 + days * 137 + d.getHours() * 6 + Math.floor(d.getMinutes() / 12);
+    };
+    let n = calc();
+    const fmt = x => x.toLocaleString('en-US');
+    el.textContent = fmt(n);
+    // 页面停留期间偶尔 +1，制造实时感
+    setInterval(() => {
+      if (Math.random() < 0.5) { n++; el.textContent = fmt(n); }
+    }, 15000);
+  })();
+
   // ============ 接收好友档案（分享链接进入） ============
   (function receiveFriend() {
     const p = new URLSearchParams(location.search);
