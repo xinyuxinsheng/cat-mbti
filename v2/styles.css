@@ -196,7 +196,7 @@ body {
 #btn-start:active { animation: none; }
 @keyframes breathe {
   0%, 100% { transform: scale(1); box-shadow: inset 0 0 0 2px rgba(248, 236, 217, 0.55), 4px 4px 0 rgba(47, 38, 28, 0.25); }
-  50% { transform: scale(1.03); box-shadow: inset 0 0 0 2px rgba(248, 236, 217, 0.55), 5px 6px 0 rgba(47, 38, 28, 0.3); }
+  50% { transform: scale(1.07); box-shadow: inset 0 0 0 2px rgba(248, 236, 217, 0.55), 6px 8px 0 rgba(47, 38, 28, 0.32); }
 }
 .stamp-btn:active { transform: translateY(3px); box-shadow: inset 0 0 0 2px rgba(248, 236, 217, 0.55), 1px 1px 0 rgba(47, 38, 28, 0.25); }
 .stamp-btn.small {
@@ -523,6 +523,7 @@ body {
   box-shadow: 6px 7px 0 rgba(47, 38, 28, 0.22);
   animation: cardIssue 0.6s cubic-bezier(0.34, 1.4, 0.64, 1) both;
   position: relative;
+  margin-bottom: 20px; /* 与档案正文留出间距 */
 }
 @keyframes cardIssue {
   from { opacity: 0; transform: rotate(-3deg) translateY(24px) scale(0.94); }
@@ -760,16 +761,29 @@ body {
   letter-spacing: 1px;
 }
 
-.d-split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.d-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.d-split > div { text-align: left; }
 .d-split h4 {
   font-family: var(--font-head);
   font-size: 14px;
   letter-spacing: 2px;
+  line-height: 22px;
   margin-bottom: 6px;
+  text-align: left;
 }
 .d-good h4 { color: #3d7a55; }
 .d-bad h4 { color: #b3862c; }
-.d-split p { font-size: 13.5px; line-height: 1.8; }
+.d-split p {
+  font-size: 13.5px;
+  line-height: 1.8;
+  margin: 0;
+  text-align: left;
+}
 
 /* 机密档案 */
 .d-locked {
@@ -1507,6 +1521,131 @@ body {
   font-size: 20px;
   color: var(--red);
 }
+
+/* ============ 写真棚 ============ */
+.stamp-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  animation: none;
+  transform: none;
+}
+.photo-hint { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 12px; }
+.photo-slots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.photo-slot {
+  aspect-ratio: 1;
+  border: 2px dashed var(--ink-soft);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  transition: border-color 0.15s ease;
+  position: relative;
+}
+.photo-slot:hover { border-color: var(--red); }
+.photo-slot .ps-plus { font-size: 26px; color: var(--ink-soft); }
+.photo-slot .ps-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--ink-soft);
+}
+.photo-slot.filled { border-style: solid; border-color: var(--ink); }
+.photo-slot.filled .ps-plus { display: none; }
+.photo-slot.filled .ps-label {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(47, 38, 28, 0.75);
+  color: var(--paper);
+  padding: 2px 0;
+  text-align: center;
+}
+.pm-text {
+  font-family: var(--font-head);
+  font-size: 15px;
+  letter-spacing: 1px;
+  text-align: center;
+  color: var(--ink);
+}
+.photo-result {
+  position: relative;
+  background: radial-gradient(circle at 50% 32%, #6b543a, #17110b 80%);
+  border: 3px solid var(--ink);
+  padding: 10px;
+  text-align: center;
+}
+.photo-result .pr-img {
+  width: 100%;
+  max-height: 340px;
+  object-fit: cover;
+  display: block;
+  border: 2px solid rgba(244, 234, 210, 0.35);
+}
+.photo-result .pr-svg {
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.photo-result .pr-svg svg {
+  width: 220px; height: 220px;
+  filter: sepia(0.55) saturate(1.5) contrast(1.15) drop-shadow(0 0 10px rgba(255, 200, 120, 0.6));
+}
+.photo-result .pr-tag {
+  position: absolute;
+  top: 16px; right: 16px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #f0d9a8;
+  border: 1px solid rgba(240, 217, 168, 0.6);
+  padding: 2px 7px;
+}
+
+/* 档案柜写真状态条 */
+.file-row { flex-wrap: wrap; }
+.fr-photo {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px dashed var(--line);
+  margin-top: 9px;
+  padding-top: 8px;
+  cursor: pointer;
+}
+.fp-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--ink-soft);
+}
+.photo-chip {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 1.5px 8px;
+  border-radius: 2px;
+}
+.photo-chip.st-lock { color: var(--ink-soft); border: 1.5px solid var(--ink-soft); opacity: 0.75; }
+.photo-chip.st-none { color: var(--blue); border: 1.5px solid var(--blue); }
+.photo-chip.st-making { color: #b3862c; border: 1.5px solid #b3862c; }
+.photo-chip.st-done { color: #fff; background: #3d7a55; border: 1.5px solid #2a563c; }
+.fp-go {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.fr-photo:hover .fp-go { color: var(--red); }
 
 /* Toast */
 .toast {

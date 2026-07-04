@@ -174,8 +174,9 @@
     result: document.getElementById('view-result'),
     archive: document.getElementById('view-archive'),
     mine: document.getElementById('view-mine'),
+    photo: document.getElementById('view-photo'),
   };
-  const TAB_OF = { landing: 'landing', test: 'landing', result: 'landing', archive: 'archive', mine: 'mine' };
+  const TAB_OF = { landing: 'landing', test: 'landing', result: 'landing', archive: 'archive', mine: 'mine', photo: 'archive' };
 
   function showView(name) {
     Object.values(views).forEach(v => v.classList.remove('active'));
@@ -215,9 +216,16 @@
     return (d.scoreSide === 'left' ? (1 - p) : p) * 100;
   }
 
-  // --- 本地存储 ---
-  const loadFiles = () => JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
+  // --- 本地存储（每条档案唯一 id，旧数据自动迁移补 id） ---
   const saveFiles = recs => localStorage.setItem(STORE_KEY, JSON.stringify(recs.slice(0, 50)));
+  const loadFiles = () => {
+    const recs = JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
+    let dirty = false;
+    recs.forEach((r, i) => { if (!r.id) { r.id = (r.t || Date.now()) + '-' + i; dirty = true; } });
+    if (dirty) saveFiles(recs);
+    return recs;
+  };
+  let currentRecId = null; // 当前结果页展示的档案 id
   const loadFriends = () => JSON.parse(localStorage.getItem(FRIENDS_KEY) || '[]');
   const saveFriends = recs => localStorage.setItem(FRIENDS_KEY, JSON.stringify(recs.slice(0, 50)));
 
@@ -345,8 +353,10 @@
   function saveFile() {
     try {
       const recs = loadFiles();
-      recs.unshift({ name: catName, color: catColor, code: resultType.code, scores: resultScores, paid: false, t: Date.now() });
+      const id = Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+      recs.unshift({ id, name: catName, color: catColor, code: resultType.code, scores: resultScores, paid: false, t: Date.now() });
       saveFiles(recs);
+      currentRecId = id;
     } catch (e) { /* 存储失败不影响主流程 */ }
   }
 
@@ -429,9 +439,9 @@
     document.getElementById('dim-bars').innerHTML = dimBarsHTML(resultScores);
   }
 
-  // 当前展示的猫是否已付费
+  // 当前展示的猫是否已付费（按档案唯一 id 匹配）
   function isPaidCurrent() {
-    return loadFiles().some(r => r.name === catName && r.code === resultType.code && r.paid);
+    return loadFiles().some(r => r.id === currentRecId && r.paid);
   }
 
   // 样章试阅 + 人格写真照样例（含已解密状态）
@@ -450,7 +460,7 @@
       ? '✓ 已解密 · 完整 12 条注解正式版持续补充中'
       : '…… 其余 10 条注解已加密，调阅后解密';
     document.getElementById('mug-note').innerHTML = paid
-      ? '📷 上传照片生成<b>本猫出镜</b>的写实三视图 · 内测排队中'
+      ? '<button class="stamp-btn small" id="btn-goto-photo" style="width:100%">📷 进入写真棚 · 生成本猫写真</button>'
       : '▲ 样例为档案简笔画示意 · 正式版上传照片后，由 AI 生成<b>本猫出镜</b>的写实三视图特摄';
     document.getElementById('locked-list').style.display = paid ? 'none' : '';
     document.getElementById('deep-price').style.display = paid ? 'none' : '';
@@ -488,6 +498,15 @@
         <div class="de-t">档案注解：${note}</div>
       </div>`).join('');
 
+    // 已解密：写真棚入口
+    if (paid) {
+      const gp = document.getElementById('btn-goto-photo');
+      if (gp) gp.addEventListener('click', () => {
+        const rec = loadFiles().find(r => r.id === currentRecId);
+        if (rec) openPhotoStudio(rec);
+      });
+    }
+
     document.getElementById('mugshots').innerHTML = `
       <div class="shot"><div class="shot-svg">${catSVG(t.code)}</div><span>正面</span></div>
       <div class="shot"><div class="shot-svg flip">${catSVG(t.code)}</div><span>侧面</span></div>
@@ -507,7 +526,7 @@
   // 解密全部档案：模拟支付成功 → 切换到已解密状态（演示模式）
   document.getElementById('btn-unlock').addEventListener('click', () => {
     const recs = loadFiles();
-    const hit = recs.find(r => r.name === catName && r.code === resultType.code);
+    const hit = recs.find(r => r.id === currentRecId);
     if (hit) { hit.paid = true; saveFiles(recs); }
     showToast('支付成功（演示模式）· 档案已解密 🔓');
     renderDeepPreview();
@@ -523,7 +542,20 @@
   // ============ 分享档案照 ============
 
   const $shareModal = document.getElementById('share-modal');
+  let shareFileName = '猫格证';
+
+  // 分享弹窗模式切换：档案照模式 / 写真模式
+  function setShareMode(mode) {
+    const photoMode = mode === 'photo';
+    document.getElementById('upgrade-strip').style.display = photoMode ? 'none' : 'flex';
+    document.getElementById('share-tip').style.display = photoMode ? 'none' : 'block';
+    document.getElementById('btn-upgrade-share').style.display = photoMode ? 'none' : '';
+    document.getElementById('btn-save-share').textContent = photoMode ? '保存写真' : '保存档案照';
+  }
+
   document.getElementById('btn-share').addEventListener('click', async () => {
+    setShareMode('normal');
+    shareFileName = `${catName}的猫格证`;
     document.getElementById('share-cat-name').textContent = catName;
     // 升级前后对比条：左简笔画档案照，右电影光效写真示意
     document.getElementById('us-now').innerHTML = catSVG(resultType.code);
@@ -539,7 +571,7 @@
     canvas.toBlob(blob => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `${catName}的猫格证.png`;
+      a.download = `${shareFileName}.png`;
       a.click();
       URL.revokeObjectURL(a.href);
     }, 'image/png');
@@ -787,6 +819,11 @@
       recs.forEach(r => {
         const t = CAT_TYPES[r.code];
         if (!t) return;
+        // 写真照状态：未解锁 / 未制作 / 制作中 / 已完成
+        const st = !r.paid ? ['lock', '未解锁']
+          : r.photoStatus === 'done' ? ['done', '已完成']
+          : r.photoStatus === 'making' ? ['making', '制作中']
+          : ['none', '未制作'];
         const row = document.createElement('div');
         row.className = 'file-row';
         row.innerHTML = `
@@ -796,14 +833,25 @@
             <span class="fr-type">${t.name} · <i class="mono">${r.code}</i></span>
             <span class="fr-date mono">${new Date(r.t).toLocaleDateString('zh-CN')}</span>
           </div>
-          <span class="fr-open">调阅 →</span>`;
+          <span class="fr-open">调阅 →</span>
+          <div class="fr-photo">
+            <span class="fp-label">📷 写真照</span>
+            <span class="photo-chip st-${st[0]}">${st[1]}</span>
+            <span class="fp-go">${st[0] === 'lock' ? '解密深度档案后开放' : '进入写真棚 →'}</span>
+          </div>`;
         row.addEventListener('click', () => {
           catName = r.name;
           catColor = r.color || '';
           resultScores = r.scores;
           resultType = CAT_TYPES[r.code];
+          currentRecId = r.id;
           renderResult();
           showView('result');
+        });
+        row.querySelector('.fr-photo').addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (!r.paid) { showToast('先解密深度档案，再进写真棚 🔓'); return; }
+          openPhotoStudio(r);
         });
         list.appendChild(row);
       });
@@ -1036,6 +1084,222 @@
     }
   }
   document.getElementById('btn-humancat').addEventListener('click', renderHumanCat);
+
+  // ============ 写真棚（演示模式） ============
+  let photoCat = null;
+  let photoImgs = [null, null, null];
+  let photoTimer = null;
+
+  function patchRecord(id, patch) {
+    const recs = loadFiles();
+    const r = recs.find(x => x.id === id);
+    if (r) { Object.assign(r, patch); saveFiles(recs); }
+  }
+
+  // 上传槽（照片仅存内存，用于本机预览）
+  document.querySelectorAll('.photo-slot').forEach(slot => {
+    const input = slot.querySelector('input');
+    input.addEventListener('change', () => {
+      const f = input.files && input.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        photoImgs[+slot.dataset.idx] = reader.result;
+        slot.style.backgroundImage = `url(${reader.result})`;
+        slot.classList.add('filled');
+        renderPhotoStage();
+      };
+      reader.readAsDataURL(f);
+    });
+  });
+
+  function openPhotoStudio(rec) {
+    photoCat = rec;
+    photoImgs = [null, null, null];
+    if (photoTimer) { clearInterval(photoTimer); photoTimer = null; }
+    document.querySelectorAll('.photo-slot').forEach(s => {
+      s.style.backgroundImage = '';
+      s.classList.remove('filled');
+      s.querySelector('input').value = '';
+    });
+    document.getElementById('photo-cat-name').textContent = rec.name;
+    const t = CAT_TYPES[rec.code];
+    const stars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
+    const sc = rec.scores || { TF: 0.5, EI: 0.5 };
+    const danger = Math.min(5, Math.max(1, Math.round(sc.TF * 5)));
+    const clingy = Math.min(5, Math.max(1, Math.round(((sc.EI + (1 - sc.TF)) / 2) * 5)));
+    document.getElementById('photo-keywords').innerHTML = `
+      <div class="ft-row"><span class="k">姓 名</span><span>${esc(rec.name)}</span></div>
+      <div class="ft-row"><span class="k">MBTI</span><span class="mono" style="color:var(--red);font-weight:700">${rec.code} · ${t.name}</span></div>
+      <div class="ft-row"><span class="k">在案编号</span><span class="mono">${fileNo(rec.code, rec.name)}</span></div>
+      <div class="ft-row"><span class="k">性格特征</span><span>${t.tags.join(' · ')}</span></div>
+      <div class="ft-row"><span class="k">危险等级</span><span class="ft-star">${stars(danger)}</span></div>
+      <div class="ft-row"><span class="k">粘人指数</span><span class="ft-star">${stars(clingy)}</span></div>
+      <div class="ft-row"><span class="k">口供摘录</span><span>${t.quotes[0]}</span></div>`;
+    renderPhotoStage();
+    showView('photo');
+  }
+
+  function renderPhotoStage() {
+    if (!photoCat) return;
+    const stage = document.getElementById('photo-stage');
+    const status = photoCat.photoStatus || 'none';
+    const hasPhoto = photoImgs.some(Boolean);
+
+    if (status === 'making') {
+      stage.innerHTML = `
+        <div class="pm-text">📸 正在冲印 ${esc(photoCat.name)} 的人格写真……</div>
+        <div class="ruler" style="margin:12px 0 8px"><div class="ruler-fill" id="pm-bar" style="width:5%"></div></div>
+        <p class="tiny center">正式版约需 30 秒 · 演示模式加速中</p>`;
+      return;
+    }
+    if (status === 'done') {
+      const img = photoImgs[0];
+      stage.innerHTML = `
+        <div class="photo-result">
+          ${img
+            ? `<img class="pr-img" src="${img}" alt="写真">`
+            : `<div class="pr-img pr-svg">${catSVG(photoCat.code)}</div>`}
+          <span class="pr-tag">演示效果 · 正式版为 AI 特摄</span>
+        </div>
+        <div class="share-btns" style="margin-top:14px">
+          <button class="stamp-btn small" id="btn-photo-share">分享写真</button>
+          <button class="stamp-btn small alt" id="btn-photo-retake">重拍（剩 1 次）</button>
+        </div>`;
+      document.getElementById('btn-photo-share').addEventListener('click', sharePhoto);
+      document.getElementById('btn-photo-retake').addEventListener('click', () => {
+        photoCat.photoStatus = 'none';
+        patchRecord(photoCat.id, { photoStatus: 'none' });
+        renderPhotoStage();
+      });
+      return;
+    }
+    // 未制作
+    stage.innerHTML = `
+      <button class="stamp-btn" id="btn-photo-gen" ${hasPhoto ? '' : 'disabled'}>开 始 冲 印</button>
+      <p class="tiny center">${hasPhoto ? '将结合上方档案要素生成 · 含 1 次免费重拍' : '至少上传 1 张照片后开始（演示模式）'}</p>`;
+    document.getElementById('btn-photo-gen').addEventListener('click', startPhotoGen);
+  }
+
+  function startPhotoGen() {
+    photoCat.photoStatus = 'making';
+    patchRecord(photoCat.id, { photoStatus: 'making' });
+    renderPhotoStage();
+    let p = 5;
+    photoTimer = setInterval(() => {
+      p += 8 + Math.random() * 18;
+      const bar = document.getElementById('pm-bar');
+      if (bar) bar.style.width = Math.min(p, 100) + '%';
+      if (p >= 100) {
+        clearInterval(photoTimer);
+        photoTimer = null;
+        photoCat.photoStatus = 'done';
+        patchRecord(photoCat.id, { photoStatus: 'done' });
+        showToast('写真冲印完成 📸');
+        renderPhotoStage();
+      }
+    }, 320);
+  }
+
+  document.getElementById('btn-photo-back').addEventListener('click', () => {
+    renderCabinet();
+    showView('archive');
+  });
+
+  function loadDataImg(src) {
+    return new Promise(res => {
+      const i = new Image();
+      i.onload = () => res(i);
+      i.onerror = () => res(null);
+      i.src = src;
+    });
+  }
+
+  function drawImageCover(ctx, img, x, y, w, h) {
+    const s = Math.max(w / img.width, h / img.height);
+    const sw = w / s, sh = h / s;
+    const sx = (img.width - sw) / 2, sy = (img.height - sh) / 2;
+    ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+  }
+
+  async function sharePhoto() {
+    setShareMode('photo');
+    shareFileName = `${photoCat.name}的人格写真`;
+    await drawPhotoShare();
+    $shareModal.classList.add('active');
+  }
+
+  // 写真分享卡：大幅写真 + 档案要素
+  async function drawPhotoShare() {
+    const rec = photoCat, t = CAT_TYPES[rec.code];
+    const canvas = document.getElementById('share-canvas');
+    const ctx = canvas.getContext('2d');
+    const W = 750, H = 1060, dpr = 2;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = '100%';
+    ctx.scale(dpr, dpr);
+    const INK = '#2f261c', RED = '#b23a2c', SOFT = '#6f5c44', PAPER = '#f4ead2';
+    try { await document.fonts.ready; } catch (e) { /* 继续 */ }
+
+    ctx.fillStyle = PAPER;
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = INK; ctx.lineWidth = 4;
+    ctx.strokeRect(14, 14, W - 28, H - 28);
+
+    ctx.textAlign = 'center';
+    ctx.font = '28px "ZCOOL QingKe HuangYou", sans-serif';
+    ctx.fillStyle = INK;
+    ctx.fillText('喵格研究所 · 人格写真', W / 2, 66);
+    ctx.font = '11px "Courier New", monospace';
+    ctx.fillStyle = SOFT;
+    ctx.fillText('MEOW MBTI PHOTO STUDIO', W / 2, 90);
+
+    // 大幅写真区
+    const px = 65, py = 112, pw = W - 130, ph = 620;
+    ctx.fillStyle = '#17110b';
+    ctx.fillRect(px, py, pw, ph);
+    const img = photoImgs[0] ? await loadDataImg(photoImgs[0]) : null;
+    if (img) {
+      drawImageCover(ctx, img, px + 8, py + 8, pw - 16, ph - 16);
+    } else {
+      const svgImg = await svgToImage(catSVG(rec.code));
+      if (svgImg) ctx.drawImage(svgImg, px + pw / 2 - 200, py + ph / 2 - 200, 400, 400);
+    }
+    ctx.strokeStyle = INK; ctx.lineWidth = 4;
+    ctx.strokeRect(px, py, pw, ph);
+    ctx.font = '12px "Courier New", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(244,234,210,0.9)';
+    ctx.fillText('DEMO · AI 特摄', px + 14, py + ph - 14);
+
+    // 档案要素
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 30px "PingFang SC", sans-serif';
+    ctx.fillStyle = INK;
+    ctx.fillText(`${rec.name} 是 ${t.name}`, W / 2, 790);
+    ctx.font = 'bold 26px "Courier New", monospace';
+    ctx.fillStyle = RED;
+    ctx.fillText(`MBTI · ${rec.code}`, W / 2, 830);
+    ctx.font = '19px "PingFang SC", sans-serif';
+    ctx.fillStyle = SOFT;
+    ctx.fillText(t.tags.join('  ·  '), W / 2, 868);
+    ctx.font = '22px "Ma Shan Zheng", cursive';
+    ctx.fillStyle = '#33507a';
+    ctx.fillText(`✎ ${t.quotes[0]}`, W / 2, 910, W - 140);
+
+    // 底部：二维码 + 编号
+    ctx.strokeStyle = INK; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(40, 940); ctx.lineTo(W - 40, 940); ctx.stroke();
+    drawQR(ctx, 'https://xinyuxinsheng.github.io/cat-mbti/v2/', 60, 958, 82);
+    ctx.textAlign = 'left';
+    ctx.font = '14px "PingFang SC", sans-serif';
+    ctx.fillStyle = INK;
+    ctx.fillText('扫码给你家猫也拍一套', 160, 990);
+    ctx.font = '12px "Courier New", monospace';
+    ctx.fillStyle = SOFT;
+    ctx.fillText(fileNo(rec.code, rec.name), 160, 1016);
+  }
 
   // ============ 受理动态走马灯 + 建档计数器 ============
   // ⚠️ 构造数据（行业常规的氛围组），小程序接入云数据库后切换为真实动态
