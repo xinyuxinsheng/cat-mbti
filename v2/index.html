@@ -19,9 +19,13 @@
     <div class="view active" id="view-landing">
 
       <header class="bureau-head">
-        <div class="bureau-emblem">🐾</div>
-        <div class="bureau-name">喵格研究所</div>
-        <div class="bureau-sub">CAT · MBTI · BUREAU · EST. 2026</div>
+        <div class="bureau-row">
+          <div class="bureau-emblem">🐾</div>
+          <div class="bureau-text">
+            <div class="bureau-name">喵格研究所</div>
+            <div class="bureau-sub">CAT · MBTI · BUREAU · EST. 2026</div>
+          </div>
+        </div>
         <div class="bureau-rule"></div>
       </header>
 
@@ -119,10 +123,6 @@
           <div class="barcode"></div>
           <span class="idc-no mono" id="idc-no"></span>
         </div>
-      </div>
-
-      <div class="share-cta">
-        <button class="stamp-btn" id="btn-share">分 享 档 案 照 🐾</button>
       </div>
 
       <!-- 档案正文 -->
@@ -227,9 +227,13 @@
         <h3 class="cab-title"><span class="d-tab">叁</span>人 &amp; 猫 MBTI</h3>
         <div class="d-sec human-cat">
           <p class="hc-sub">猫猫学专家帮你更好"拿捏"ta</p>
-          <p class="d-text">你做一版 3 分钟人类 MBTI 快测，结合 TA 的喵格，出一份双向适配报告：谁在驯服谁、雷区在哪里、怎么讨好最有效。</p>
-          <button class="stamp-btn small" id="btn-humancat">申请解锁 · ¥19.9</button>
-          <p class="tiny center" id="humancat-tip"></p>
+          <div class="compare-row">
+            <select id="hc-human"></select>
+            <span class="vs">×</span>
+            <select id="hc-cat"></select>
+          </div>
+          <button class="stamp-btn small" id="btn-humancat">测 适 配 度</button>
+          <div id="hc-result"></div>
         </div>
       </div>
 
@@ -259,6 +263,12 @@
       </section>
       <footer class="foot">喵格研究所 v2 · CONCEPT</footer>
     </div>
+  </div>
+
+  <!-- 结果页悬浮操作栏 -->
+  <div class="float-bar" id="float-bar" style="display:none">
+    <button class="stamp-btn fb" id="btn-share">分享档案照</button>
+    <button class="stamp-btn fb alt" id="btn-deep">深度档案 ¥9.9</button>
   </div>
 
   <!-- 底部 Tab -->

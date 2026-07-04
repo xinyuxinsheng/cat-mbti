@@ -117,10 +117,20 @@
     Object.values(views).forEach(v => v.classList.remove('active'));
     views[name].classList.add('active');
     document.getElementById('tabbar').style.display = name === 'test' ? 'none' : 'flex';
+    document.getElementById('float-bar').style.display = name === 'result' ? 'flex' : 'none';
     document.querySelectorAll('.tab-btn').forEach(b =>
       b.classList.toggle('active', b.dataset.view === TAB_OF[name]));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  // 悬浮栏：深度档案 → 滚动到机密档案区并高亮
+  function gotoLocked() {
+    const locked = document.getElementById('d-locked');
+    locked.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    locked.classList.remove('flash');
+    setTimeout(() => locked.classList.add('flash'), 50);
+  }
+  document.getElementById('btn-deep').addEventListener('click', gotoLocked);
 
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -422,10 +432,7 @@
   // 升级档案照 → 进入付费（滚动到机密档案区并高亮）
   document.getElementById('btn-upgrade-share').addEventListener('click', () => {
     $shareModal.classList.remove('active');
-    const locked = document.getElementById('d-locked');
-    locked.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    locked.classList.remove('flash');
-    setTimeout(() => locked.classList.add('flash'), 50);
+    gotoLocked();
   });
 
   function svgToImage(svgStr) {
@@ -745,6 +752,10 @@
       box.style.display = 'none';
     }
     document.getElementById('compare-result').innerHTML = '';
+
+    // —— 叁 · 人 & 猫 MBTI 选项 ——
+    fillHumanCatSelects(recs, friends);
+    document.getElementById('hc-result').innerHTML = '';
   }
 
   function copyInvite() {
@@ -765,10 +776,10 @@
   function renderCompare(ca, cb) {
     const pair = getPairing(ca.code, esc(ca.name), cb.code, esc(cb.name));
     const dims = [
-      ['社交性', 0, '外向E', '内向I'],
-      ['好奇心', 1, '谨慎S', '好奇N'],
-      ['支配性', 2, '强势T', '温和F'],
-      ['规律性', 3, '规律J', '随性P'],
+      ['社交性', 0],
+      ['好奇心', 1],
+      ['支配性', 2],
+      ['规律性', 3],
     ];
     const dimRows = dims.map(([label, i]) => {
       const la = ca.code[i], lb = cb.code[i];
@@ -780,6 +791,7 @@
         <span class="mono">${lb}</span>
       </div>`;
     }).join('');
+    // 免费：缘分值 + 称号 + 锐评；深度解读（维度对比/冲突预警/和平指南）¥9.9 开通
     document.getElementById('compare-result').innerHTML = `
       <div class="cr-head">
         <div class="cr-cat"><div class="cr-svg">${catSVG(ca.code)}</div><b>${esc(ca.name)}</b><span class="mono">${ca.code}</span></div>
@@ -788,27 +800,81 @@
       </div>
       <div class="cr-title">「${pair.title}」</div>
       <p class="cr-line">${pair.line}</p>
-      <div class="cr-dims">${dimRows}</div>
       <div class="cr-locked">
-        <div class="dict-title">🔒 完整《相处剧本》· 待调阅</div>
+        <div class="dict-title">🔒 深度解读 · 待开通</div>
+        <div class="blur-lock"><div class="cr-dims">${dimRows}</div></div>
         <ul class="locked-list">
-          <li>▪ 初次见面剧本——谁先凑近、破冰要几天</li>
-          <li>▪ 冲突预警——什么情况会打架、谁是挑事的</li>
-          <li>▪ 和平共处指南——资源分配与空间布置 3 条建议</li>
+          <li>▪ 维度对比——四个维度同频/互补逐项解读</li>
+          <li>▪ 冲突预警——什么情况会炸毛、谁是挑事的</li>
+          <li>▪ 和平共处指南——资源分配与空间布置建议</li>
         </ul>
-        <button class="stamp-btn small" id="btn-script-unlock">申请调阅 · ¥9.9</button>
+        <button class="stamp-btn small" id="btn-script-unlock">开通深度对比 · ¥9.9</button>
+        <p class="tiny center">开通后可无限次对比任意两只猫</p>
         <p class="tiny center" id="script-tip"></p>
       </div>`;
     document.getElementById('btn-script-unlock').addEventListener('click', () => {
       document.getElementById('script-tip').textContent =
-        '调阅申请已登记 ✅ 付费通道开放后将第一时间通知你。';
+        '开通申请已登记 ✅ 付费通道开放后将第一时间通知你。';
     });
   }
 
-  // 人 & 猫 MBTI 付费位
+  // ============ 人 & 猫 MBTI ============
+
+  // 人猫适配分：互补优先（人的包容度 × 猫的性格强度）
+  function humanCatScore(h, c) {
+    let s = 50;
+    if (h[0] === 'E' && c[0] === 'E') s += 8;        // 双外向：互动拉满
+    else if (h[0] === 'I' && c[0] === 'I') s += 9;   // 双内向：安静同频
+    else if (c[0] === 'E') s += 7;                   // 猫外向主动破冰
+    else s += 4;                                     // 人热猫冷需磨合
+    s += h[1] === c[1] ? 6 : 4;
+    if (h[2] === 'T' && c[2] === 'T') s -= 4;        // 双强势易较劲
+    else if (h[2] === 'F' && c[2] === 'T') s += 9;   // 人包容 × 猫霸道
+    else if (h[2] === 'T') s += 8;                   // 人主导 × 猫温和
+    else s += 7;
+    s += h[3] === c[3] ? 7 : 4;
+    return Math.max(35, Math.min(98, s));
+  }
+  const hcLevel = s => s >= 85 ? '天作之合' : s >= 70 ? '相处融洽' : s >= 55 ? '需要磨合' : '缘分挑战';
+
+  function fillHumanCatSelects(recs, friends) {
+    const hcH = document.getElementById('hc-human');
+    hcH.innerHTML = '<option value="">你的 MBTI</option>' +
+      Object.keys(CAT_TYPES).map(c => `<option value="${c}">${c}</option>`).join('');
+    const mine = recs.map(r => `<option value="${r.code}">${esc(r.name)}（${r.code}）</option>`).join('');
+    const pals = friends.map(f => `<option value="${f.code}">${esc(f.name)}（${f.code}）</option>`).join('');
+    document.getElementById('hc-cat').innerHTML =
+      (mine ? `<optgroup label="我的猫">${mine}</optgroup>` : '') +
+      (pals ? `<optgroup label="好友的猫">${pals}</optgroup>` : '') +
+      `<optgroup label="按类型选">${Object.entries(CAT_TYPES).map(([c, t]) =>
+        `<option value="${c}">${t.name}（${c}）</option>`).join('')}</optgroup>`;
+  }
+
   document.getElementById('btn-humancat').addEventListener('click', () => {
-    document.getElementById('humancat-tip').textContent =
-      '解锁申请已登记 ✅ 人类快测题库上线后将第一时间通知你。';
+    const h = document.getElementById('hc-human').value;
+    const c = document.getElementById('hc-cat').value;
+    if (!h) { showToast('先选择你自己的 MBTI 🧑'); return; }
+    const s = humanCatScore(h, c);
+    document.getElementById('hc-result').innerHTML = `
+      <div class="hc-score">
+        <span class="mono hc-codes">${h} × ${c}</span>
+        <b>${s}</b>
+        <div class="hc-level">「${hcLevel(s)}」</div>
+      </div>
+      <div class="cr-locked">
+        <div class="dict-title">🔒 完整适配解析 · 待解锁</div>
+        <ul class="locked-list">
+          <li>▪ 谁在驯服谁——你们的权力结构解析</li>
+          <li>▪ 雷区清单——千万别对 TA 做的事</li>
+          <li>▪ 讨好攻略——对这只猫最有效的示好方式</li>
+        </ul>
+        <button class="stamp-btn small" id="btn-hc-unlock">解锁完整解析 · ¥19.9</button>
+        <p class="tiny center" id="humancat-tip"></p>
+      </div>`;
+    document.getElementById('btn-hc-unlock').addEventListener('click', () => {
+      document.getElementById('humancat-tip').textContent =
+        '解锁申请已登记 ✅ 付费通道开放后将第一时间通知你。';
+    });
   });
 
   // ============ 接收好友档案（分享链接进入） ============
