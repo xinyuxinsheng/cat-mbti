@@ -103,6 +103,70 @@
     ],
   };
 
+  // --- 解锁后内容生成器（按 MBTI 字母规则生成，全部确定性） ---
+  const CARE_TIPS = {
+    E: '家里来客让它参与互动，它自认是主陪，别晾着它',
+    I: '给它保留一个不被打扰的高处或纸箱，客人来访前打开"避难通道"',
+    N: '玩具每周轮换，快递纸箱多留三天，探索欲需要出口',
+    S: '家具布局尽量稳定，要变动前先让它闻过再动',
+    T: '碗、窝、猫抓板独立配置不共用，投喂准时——仪式感就是它的安全感',
+    F: '每天固定一段温柔抚摸时间，多用轻声交流，它吃软不吃硬',
+    J: '定点喂食，误差控制在半小时内，作息被打乱要加倍补偿陪伴',
+    P: '准备多样玩具轮着来防止腻，接受它的即兴发挥',
+  };
+  const RED_TIPS = {
+    E: '让它参与家庭活动，它最讨厌被排除在外',
+    I: '尊重它的独处时间，等它主动靠近再互动',
+    S: '保持环境可预测，它就还你稳定的情绪',
+    N: '给它留探索空间，柜顶不该是禁区',
+    T: '承认它的地位，第一口罐头永远先给它',
+    F: '睡前的抚摸仪式，是它一天的期待',
+    J: '它的时间表比你的闹钟准，跟着它走',
+    P: '陪它疯，别管章法',
+  };
+  const BLACK_TIPS = {
+    E: '别长时间独留它在家，它真的会郁闷',
+    I: '别强行把它抱出来见客',
+    S: '别频繁挪动它的碗和猫砂盆',
+    N: '别买了猫爬架又不许它上柜顶',
+    T: '别徒手抢它的玩具或食物——会挂彩',
+    F: '别大声呵斥，它会记仇很久',
+    J: '别随意打乱它的作息，小心报复性拆家',
+    P: '别指望它对一个玩具从一而终',
+  };
+
+  function conflictLines(a, b) {
+    const lines = [];
+    if (a[2] === 'T' && b[2] === 'T') lines.push('两只都要当老大，资源是主要火药桶——碗、窝、猫砂盆全部双份并拉开距离');
+    else if (a[2] !== b[2]) lines.push('强势一方会试探性压制，留意温和方是否长期躲藏、食欲下降');
+    else lines.push('双温和组合，冲突概率低——偶尔追逐多是游戏，尾巴炸毛才需要介入');
+    if (a[0] === 'E' && b[0] === 'E') lines.push('双外向精力旺盛，深夜跑酷可能升级成群架，睡前放电很重要');
+    if (a[3] !== b[3]) lines.push('作息不同步：规律方的午睡常被随性方偷袭，给规律方留一个高处避难所');
+    return lines;
+  }
+  function peaceLines(a, b) {
+    const lines = [
+      '资源 N+1 原则：猫砂盆、水碗数量 = 猫的数量 + 1',
+      '垂直分层：一只柜顶、一只窝，视线错开就是和平',
+    ];
+    if (a[1] === 'N' || b[1] === 'N') lines.push('探索型猫领地欲更强，新物件先给它检阅，再开放共享');
+    return lines;
+  }
+
+  function hcAnalysis(h, c) {
+    let power;
+    if (c[2] === 'T' && h[2] === 'F') power = '它是决策层，你是执行层。好消息是——它对听话的执行层向来大方。';
+    else if (h[2] === 'T' && c[2] === 'F') power = '表面上你说了算，实际上它用温柔让你心甘情愿地加班伺候，这叫软性执政。';
+    else if (h[2] === 'T' && c[2] === 'T') power = '双强势组合，日常上演宫斗剧。记住：谁先低头蹭谁，谁就赢了。';
+    else power = '双温和组合，没有权力斗争，只有互相迁就的岁月静好。';
+    const mines = [BLACK_TIPS[c[1]], BLACK_TIPS[c[2]]];
+    const tips = [
+      c[0] === 'E' ? '多陪它玩追逐游戏——它要的是互动，不是零食' : '安静地坐在它附近各干各的，是它认可的最高级陪伴',
+      c[3] === 'J' ? '投喂准时，仪式感就是它的命' : '随它的节奏来——它想玩的时候你在场，就够了',
+    ];
+    return { power, mines, tips };
+  }
+
   // --- Views & Tabbar ---
   const views = {
     landing: document.getElementById('view-landing'),
@@ -365,13 +429,61 @@
     document.getElementById('dim-bars').innerHTML = dimBarsHTML(resultScores);
   }
 
-  // 样章试阅 + 人格写真照样例
+  // 当前展示的猫是否已付费
+  function isPaidCurrent() {
+    return loadFiles().some(r => r.name === catName && r.code === resultType.code && r.paid);
+  }
+
+  // 样章试阅 + 人格写真照样例（含已解密状态）
   function renderDeepPreview() {
     const t = resultType;
     const entries = DEEP_PREVIEW[t.code] || [];
+    const paid = isPaidCurrent();
+
+    // —— 状态复位/切换 ——
+    const locked = document.getElementById('d-locked');
+    locked.classList.toggle('unlocked', paid);
+    document.getElementById('locked-band').textContent = paid ? '已解密 · UNLOCKED' : '机 密 · CLASSIFIED';
+    document.getElementById('locked-title').innerHTML = paid ? '🔓 深度档案 · 已解密' : '🔒 深度档案 · 待调阅';
+    document.getElementById('preview-label').textContent = paid ? '—— 完 整 档 案 ——' : '—— 样 章 试 阅 ——';
+    document.getElementById('dict-more').textContent = paid
+      ? '✓ 已解密 · 完整 12 条注解正式版持续补充中'
+      : '…… 其余 10 条注解已加密，调阅后解密';
+    document.getElementById('mug-note').innerHTML = paid
+      ? '📷 上传照片生成<b>本猫出镜</b>的写实三视图 · 内测排队中'
+      : '▲ 样例为档案简笔画示意 · 正式版上传照片后，由 AI 生成<b>本猫出镜</b>的写实三视图特摄';
+    document.getElementById('locked-list').style.display = paid ? 'none' : '';
+    document.getElementById('deep-price').style.display = paid ? 'none' : '';
+    const unlockBtn = document.getElementById('btn-unlock');
+    unlockBtn.textContent = paid ? '已解密 ✓ 永久有效' : '解密全部档案 🔓';
+    unlockBtn.classList.toggle('done', paid);
+    unlockBtn.disabled = paid;
+    // 悬浮栏同步
+    const fbDeep = document.getElementById('btn-deep');
+    fbDeep.innerHTML = paid ? '深度档案 · 已解密 ✓' : '解密档案 ¥9.9 <s>¥39.9</s>';
+    fbDeep.classList.toggle('done', paid);
+
+    // —— 已解密：追加红黑榜 + 喂养建议 ——
+    const extra = document.getElementById('deep-extra');
+    if (paid) {
+      const c = t.code;
+      const reds = [RED_TIPS[c[0]], RED_TIPS[c[3]]];
+      const blacks = [BLACK_TIPS[c[1]], BLACK_TIPS[c[2]]];
+      const cares = [...c].map(l => CARE_TIPS[l]);
+      extra.innerHTML = `
+        <div class="dict-title" style="margin-top:22px">《相处红黑榜》</div>
+        <div class="rb-grid">
+          <div class="rb red"><h5>✓ 红榜 · 多做</h5><ul>${reds.map(x => `<li>${x}</li>`).join('')}</ul></div>
+          <div class="rb black"><h5>✗ 黑榜 · 别碰</h5><ul>${blacks.map(x => `<li>${x}</li>`).join('')}</ul></div>
+        </div>
+        <div class="dict-title" style="margin-top:18px">《喂养环境建议》</div>
+        <ul class="care-list">${cares.map(x => `<li>🐾 ${x}</li>`).join('')}</ul>`;
+    } else {
+      extra.innerHTML = '';
+    }
 
     document.getElementById('dict-entries').innerHTML = entries.map(([b, note], i) => `
-      <div class="dict-entry${i === 1 ? ' faded' : ''}">
+      <div class="dict-entry${!paid && i === 1 ? ' faded' : ''}">
         <div class="de-b">▸ 观察到的行为：${b}</div>
         <div class="de-t">档案注解：${note}</div>
       </div>`).join('');
@@ -392,13 +504,14 @@
       <div class="ft-row"><span class="k">口供摘录</span><span>${t.quotes[0]}</span></div>`;
   }
 
-  // 申请调阅：登记意愿 + 标记付费档案（演示）
+  // 解密全部档案：模拟支付成功 → 切换到已解密状态（演示模式）
   document.getElementById('btn-unlock').addEventListener('click', () => {
-    document.getElementById('unlock-tip').textContent =
-      '调阅申请已登记 ✅ 付费通道开放后将第一时间通知你。';
     const recs = loadFiles();
     const hit = recs.find(r => r.name === catName && r.code === resultType.code);
     if (hit) { hit.paid = true; saveFiles(recs); }
+    showToast('支付成功（演示模式）· 档案已解密 🔓');
+    renderDeepPreview();
+    document.getElementById('unlock-tip').textContent = '';
   });
 
   document.getElementById('btn-retest').addEventListener('click', () => {
@@ -794,32 +907,48 @@
         <span class="mono">${lb}</span>
       </div>`;
     }).join('');
-    // 免费：缘分值 + 称号 + 锐评；深度解读（维度对比/冲突预警/和平指南）¥9.9 开通
-    document.getElementById('compare-result').innerHTML = `
+    // 免费：缘分值 + 称号 + 锐评；深度解读 ¥9.9 开通（开通后无限次，已开通显示全文）
+    const unlocked = localStorage.getItem('meow_cmp_unlocked') === '1';
+    const head = `
       <div class="cr-head">
         <div class="cr-cat"><div class="cr-svg">${catSVG(ca.code)}</div><b>${esc(ca.name)}</b><span class="mono">${ca.code}</span></div>
         <div class="cr-score"><b>${pair.score}</b><span>缘分值</span></div>
         <div class="cr-cat"><div class="cr-svg">${catSVG(cb.code)}</div><b>${esc(cb.name)}</b><span class="mono">${cb.code}</span></div>
       </div>
       <div class="cr-title">「${pair.title}」</div>
-      <p class="cr-line">${pair.line}</p>
-      <div class="cr-locked">
-        <div class="dict-title">🔒 深度解读 · 待开通</div>
-        <div class="blur-lock"><div class="cr-dims">${dimRows}</div></div>
-        <ul class="locked-list">
-          <li>▪ 维度对比——四个维度同频/互补逐项解读</li>
-          <li>▪ 冲突预警——什么情况会炸毛、谁是挑事的</li>
-          <li>▪ 和平共处指南——资源分配与空间布置建议</li>
-        </ul>
-        <div class="price-row"><b>¥9.9</b><s>¥39.9</s><span class="price-tag">限时内测价</span></div>
-        <button class="stamp-btn small" id="btn-script-unlock">解密两猫关系 🔓</button>
-        <p class="tiny center">开通后可无限次对比任意两只猫</p>
-        <p class="tiny center" id="script-tip"></p>
-      </div>`;
-    document.getElementById('btn-script-unlock').addEventListener('click', () => {
-      document.getElementById('script-tip').textContent =
-        '开通申请已登记 ✅ 付费通道开放后将第一时间通知你。';
-    });
+      <p class="cr-line">${pair.line}</p>`;
+
+    const deepBody = unlocked
+      ? `<div class="cr-locked unlocked-box">
+          <div class="dict-title">🔓 深度解读 · 已开通</div>
+          <div class="cr-dims">${dimRows}</div>
+          <div class="dict-title" style="margin-top:14px">⚡ 冲突预警</div>
+          <ul class="care-list">${conflictLines(ca.code, cb.code).map(x => `<li>▪ ${x}</li>`).join('')}</ul>
+          <div class="dict-title" style="margin-top:14px">🕊 和平共处指南</div>
+          <ul class="care-list">${peaceLines(ca.code, cb.code).map(x => `<li>▪ ${x}</li>`).join('')}</ul>
+          <p class="tiny center unlock-done">已开通 · 无限次对比 ✓</p>
+        </div>`
+      : `<div class="cr-locked">
+          <div class="dict-title">🔒 深度解读 · 待开通</div>
+          <div class="blur-lock"><div class="cr-dims">${dimRows}</div></div>
+          <ul class="locked-list">
+            <li>▪ 维度对比——四个维度同频/互补逐项解读</li>
+            <li>▪ 冲突预警——什么情况会炸毛、谁是挑事的</li>
+            <li>▪ 和平共处指南——资源分配与空间布置建议</li>
+          </ul>
+          <div class="price-row"><b>¥9.9</b><s>¥39.9</s><span class="price-tag">限时内测价</span></div>
+          <button class="stamp-btn small" id="btn-script-unlock">解密两猫关系 🔓</button>
+          <p class="tiny center">开通后可无限次对比任意两只猫</p>
+        </div>`;
+
+    document.getElementById('compare-result').innerHTML = head + deepBody;
+    if (!unlocked) {
+      document.getElementById('btn-script-unlock').addEventListener('click', () => {
+        localStorage.setItem('meow_cmp_unlocked', '1');
+        showToast('支付成功（演示模式）· 深度对比已开通 🔓');
+        renderCompare(ca, cb);
+      });
+    }
   }
 
   // ============ 人 & 猫 MBTI ============
@@ -837,7 +966,9 @@
     else if (h[2] === 'T') s += 8;                   // 人主导 × 猫温和
     else s += 7;
     s += h[3] === c[3] ? 7 : 4;
-    return Math.max(35, Math.min(98, s));
+    // 原始分范围 58~81，线性重映射到 42~98，保证四档等级全部可达
+    // （详见 docs/人猫匹配算法说明.md）
+    return Math.round(42 + (s - 58) * (98 - 42) / (81 - 58));
   }
   const hcLevel = s => s >= 85 ? '天作之合' : s >= 70 ? '相处融洽' : s >= 55 ? '需要磨合' : '缘分挑战';
 
@@ -854,32 +985,57 @@
         `<option value="${c}">${t.name}（${c}）</option>`).join('')}</optgroup>`;
   }
 
-  document.getElementById('btn-humancat').addEventListener('click', () => {
+  function renderHumanCat() {
     const h = document.getElementById('hc-human').value;
     const c = document.getElementById('hc-cat').value;
     if (!h) { showToast('先选择你自己的 MBTI 🧑'); return; }
     const s = humanCatScore(h, c);
-    document.getElementById('hc-result').innerHTML = `
+    const unlocked = localStorage.getItem('meow_hc_unlocked') === '1';
+
+    const scoreBlock = `
       <div class="hc-score">
         <span class="mono hc-codes">${h} × ${c}</span>
         <b>${s}</b>
         <div class="hc-level">「${hcLevel(s)}」</div>
-      </div>
-      <div class="cr-locked">
-        <div class="dict-title">🔒 完整适配解析 · 待解锁</div>
-        <ul class="locked-list">
-          <li>▪ 谁在驯服谁——你们的权力结构解析</li>
-          <li>▪ 雷区清单——千万别对 TA 做的事</li>
-          <li>▪ 讨好攻略——对这只猫最有效的示好方式</li>
-        </ul>
-        <button class="stamp-btn small" id="btn-hc-unlock">解锁完整解析 · ¥19.9</button>
-        <p class="tiny center" id="humancat-tip"></p>
       </div>`;
-    document.getElementById('btn-hc-unlock').addEventListener('click', () => {
-      document.getElementById('humancat-tip').textContent =
-        '解锁申请已登记 ✅ 付费通道开放后将第一时间通知你。';
-    });
-  });
+
+    let body;
+    if (unlocked) {
+      const a = hcAnalysis(h, c);
+      body = `
+        <div class="cr-locked unlocked-box">
+          <div class="dict-title">🔓 完整适配解析 · 已解锁</div>
+          <div class="dict-title" style="margin-top:12px">👑 谁在驯服谁</div>
+          <p class="d-text" style="font-size:13.5px">${a.power}</p>
+          <div class="dict-title" style="margin-top:14px">💣 雷区清单</div>
+          <ul class="care-list">${a.mines.map(x => `<li>▪ ${x}</li>`).join('')}</ul>
+          <div class="dict-title" style="margin-top:14px">🍖 讨好攻略</div>
+          <ul class="care-list">${a.tips.map(x => `<li>▪ ${x}</li>`).join('')}</ul>
+          <p class="tiny center unlock-done">已解锁 · 任意人猫组合可查 ✓</p>
+        </div>`;
+    } else {
+      body = `
+        <div class="cr-locked">
+          <div class="dict-title">🔒 完整适配解析 · 待解锁</div>
+          <ul class="locked-list">
+            <li>▪ 谁在驯服谁——你们的权力结构解析</li>
+            <li>▪ 雷区清单——千万别对 TA 做的事</li>
+            <li>▪ 讨好攻略——对这只猫最有效的示好方式</li>
+          </ul>
+          <button class="stamp-btn small" id="btn-hc-unlock">解锁完整解析 · ¥19.9</button>
+          <p class="tiny center" id="humancat-tip"></p>
+        </div>`;
+    }
+    document.getElementById('hc-result').innerHTML = scoreBlock + body;
+    if (!unlocked) {
+      document.getElementById('btn-hc-unlock').addEventListener('click', () => {
+        localStorage.setItem('meow_hc_unlocked', '1');
+        showToast('支付成功（演示模式）· 完整解析已解锁 🔓');
+        renderHumanCat();
+      });
+    }
+  }
+  document.getElementById('btn-humancat').addEventListener('click', renderHumanCat);
 
   // ============ 受理动态走马灯 + 建档计数器 ============
   // ⚠️ 构造数据（行业常规的氛围组），小程序接入云数据库后切换为真实动态

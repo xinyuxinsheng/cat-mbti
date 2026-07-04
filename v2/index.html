@@ -67,7 +67,6 @@
           </div>
 
           <button class="stamp-btn" id="btn-start">开 始 建 档</button>
-          <p class="tiny">档案仅存于本机设备 · 观察项参考「Feline Five」猫科人格研究</p>
         </div>
       </div>
 
@@ -164,28 +163,30 @@
 
         <!-- 机密档案（付费位 + 样章试阅） -->
         <div class="d-sec d-locked" id="d-locked">
-          <div class="locked-band">机 密 · CLASSIFIED</div>
-          <h3>🔒 深度档案 · 待调阅</h3>
+          <div class="locked-band" id="locked-band">机 密 · CLASSIFIED</div>
+          <h3 id="locked-title">🔒 深度档案 · 待调阅</h3>
 
-          <div class="preview-label">—— 样 章 试 阅 ——</div>
+          <div class="preview-label" id="preview-label">—— 样 章 试 阅 ——</div>
 
           <div class="dict-title">《行为翻译词典》节选</div>
           <div id="dict-entries"></div>
-          <div class="dict-more">…… 其余 10 条注解已加密，调阅后解密</div>
+          <div class="dict-more" id="dict-more">…… 其余 10 条注解已加密，调阅后解密</div>
 
           <div class="dict-title" style="margin-top:22px">《人格写真照》样例 · 三视图特摄</div>
           <div class="mugshots" id="mugshots"></div>
           <div class="feature-table" id="feature-table"></div>
-          <p class="tiny">▲ 样例为档案简笔画示意 · 正式版上传照片后，由 AI 生成<b>本猫出镜</b>的写实三视图特摄</p>
+          <p class="tiny" id="mug-note">▲ 样例为档案简笔画示意 · 正式版上传照片后，由 AI 生成<b>本猫出镜</b>的写实三视图特摄</p>
+
+          <div id="deep-extra"></div>
 
           <div class="locked-divider"></div>
-          <ul class="locked-list">
+          <ul class="locked-list" id="locked-list">
             <li>▪ 行为翻译词典——完整 12 条档案注解</li>
             <li>▪ 相处红黑榜——对它的禁忌事项清单</li>
             <li>▪ 喂养环境建议——按喵格布置的生活方案</li>
             <li>▪ 人格写真照——本猫出镜的三视图特摄（含 1 次重拍）</li>
           </ul>
-          <div class="price-row"><b>¥9.9</b><s>¥39.9</s><span class="price-tag">限时内测价</span></div>
+          <div class="price-row" id="deep-price"><b>¥9.9</b><s>¥39.9</s><span class="price-tag">限时内测价</span></div>
           <button class="stamp-btn small" id="btn-unlock">解密全部档案 🔓</button>
           <p class="tiny center" id="unlock-tip"></p>
         </div>
@@ -249,7 +250,7 @@
         </div>
       </div>
 
-      <footer class="foot">同一只猫可重新建档 · 档案保存在本机浏览器</footer>
+      <footer class="foot">同一只猫可重新建档 · 档案保存在本地</footer>
     </div>
 
     <!-- ============ 我的 ============ -->

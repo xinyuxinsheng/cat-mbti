@@ -1324,6 +1324,64 @@ body {
   background: linear-gradient(180deg, transparent 20%, var(--card) 94%);
 }
 
+/* ============ 解锁后状态 ============ */
+#d-locked.unlocked { border-color: #3d7a55; }
+#d-locked.unlocked .locked-band { background: #3d7a55; }
+#d-locked.unlocked h3 { color: #3d7a55; }
+.stamp-btn.done {
+  background: #3d7a55;
+  border-color: #2a563c;
+  cursor: default;
+  animation: none;
+}
+.stamp-btn.done:hover { transform: none; }
+.unlocked-box { border-top-color: rgba(61, 122, 85, 0.5); }
+.unlocked-box .dict-title:first-child { color: #3d7a55; }
+.unlock-done {
+  color: #3d7a55 !important;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* 红黑榜 */
+.rb-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.rb {
+  border: 2px solid var(--ink);
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.45);
+}
+.rb h5 {
+  font-family: var(--font-head);
+  font-size: 13px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.rb.red h5 { color: #3d7a55; }
+.rb.black h5 { color: var(--red); }
+.rb ul { list-style: none; }
+.rb li {
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.rb.red { border-color: #3d7a55; }
+.rb.black { border-color: var(--red); }
+
+/* 喂养建议 / 解读列表 */
+.care-list { list-style: none; }
+.care-list li {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
 /* 人 & 猫适配分 */
 .hc-score {
   text-align: center;
