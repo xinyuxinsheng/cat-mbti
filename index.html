@@ -2,324 +2,36 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>喵格测试 · 猫咪MBTI性格测试</title>
-  <meta name="description" content="24道题发现你家猫主子的隐藏性格，16种猫咪人格类型等你解锁！">
-  <meta name="theme-color" content="#fdf3e0">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Baloo+2:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>喵格测试 · 猫咪MBTI</title>
+  <meta name="description" content="猫咪MBTI测试：24 个问题，测出主子的真实猫格。">
+  <meta http-equiv="refresh" content="1;url=v2/">
+  <script>
+    // 主入口重定向到 v2（档案馆版）。
+    // 兼容 v1 时代的旧分享链接：match/mname → v2 的 fcode/fname
+    (function () {
+      var p = new URLSearchParams(location.search);
+      var q = new URLSearchParams();
+      if (p.get('match')) q.set('fcode', p.get('match'));
+      if (p.get('mname')) q.set('fname', p.get('mname'));
+      p.forEach(function (v, k) {
+        if (k !== 'match' && k !== 'mname') q.set(k, v);
+      });
+      var qs = q.toString();
+      location.replace('v2/' + (qs ? '?' + qs : ''));
+    })();
+  </script>
+  <style>
+    body { font-family: -apple-system, "PingFang SC", sans-serif; background: #f2e7cd;
+           display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+    .tip { text-align: center; color: #6f5c44; font-size: 14px; }
+    a { color: #b23a2c; }
+  </style>
 </head>
 <body>
-  <div class="app" id="app">
-
-    <!-- === LANDING === -->
-    <div class="view active" id="view-landing">
-      <div class="floaties" aria-hidden="true">
-        <span style="top:4%;left:6%">🐟</span>
-        <span style="top:10%;right:8%">🧶</span>
-        <span style="top:30%;left:2%">🐾</span>
-        <span style="top:36%;right:3%">🥫</span>
-        <span style="top:62%;left:4%">🍤</span>
-        <span style="top:70%;right:6%">🐭</span>
-      </div>
-      <div class="landing">
-        <div class="match-banner" id="match-banner" style="display:none"></div>
-        <div class="landing-cat" id="landing-cat"></div>
-        <div><span class="title-chip">MEOW-BTI · 喵格研究所</span></div>
-        <h1>喵格<span class="accent">测试</span></h1>
-        <p class="subtitle">24道题，发现你家猫主子的隐藏性格</p>
-        <div class="benefits">
-          <div class="benefit"><span class="b-icon">🧠</span><div><b>读懂迷惑行为</b><small>半夜跑酷、疯狂踩奶……行为背后都是性格</small></div></div>
-          <div class="benefit"><span class="b-icon">💡</span><div><b>拿到相处指南</b><small>按它的性格选玩具、留空间、给自由</small></div></div>
-          <div class="benefit"><span class="b-icon">📸</span><div><b>领专属人格海报</b><small>一张能直接发朋友圈的猫咪人格卡</small></div></div>
-        </div>
-        <div class="landing-form">
-          <div class="input-group">
-            <label for="cat-name">猫咪名字 *</label>
-            <input type="text" id="cat-name" placeholder="输入你家主子的名字" maxlength="12" autocomplete="off">
-          </div>
-          <div class="input-group">
-            <label for="cat-color">品种 / 花色（可选）</label>
-            <select id="cat-color">
-              <option value="">请选择</option>
-              <option value="orange">橘猫 🍊</option>
-              <option value="lihua">狸花猫 🐯</option>
-              <option value="calico">三花猫 🎨</option>
-              <option value="tuxedo">奶牛猫 🐄</option>
-              <option value="black">玄猫（黑猫）🖤</option>
-              <option value="white">白猫 🤍</option>
-              <option value="bs-blue">英短蓝猫 / 蓝白 🫐</option>
-              <option value="gradient">金渐层 / 银渐层 ✨</option>
-              <option value="as">美短 🌀</option>
-              <option value="ragdoll">布偶猫 🧸</option>
-              <option value="siamese">暹罗猫 ⛷️</option>
-              <option value="garfield">加菲（异国短毛）🍰</option>
-              <option value="devon">德文 / 无毛猫 👽</option>
-              <option value="other">其他 🐾</option>
-            </select>
-          </div>
-          <button class="btn-primary" id="btn-start">开始测试 🐾</button>
-          <p class="privacy-line">开始测试即表示同意 <a id="privacy-link">《隐私说明》</a></p>
-        </div>
-        <div class="landing-types">
-          <h2>🐱 先认识一下 16 种喵格</h2>
-          <p class="lt-sub">先猜猜你家主子最像哪一款，测完 24 题验证直觉<br>点卡片可以偷看每种喵格的性格档案</p>
-          <div id="landing-gallery"></div>
-        </div>
-      </div>
-      <div class="footer">
-        题目设计参考猫科人格研究「Feline Five」五维模型<br>结果偏娱乐，请配合猫条食用 🐟
-      </div>
-    </div>
-
-    <!-- === TEST === -->
-    <div class="view" id="view-test">
-      <div class="test-header">
-        <div class="progress-bar">
-          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-          <span class="progress-cat" id="progress-cat">🐈</span>
-        </div>
-        <div class="progress-text" id="progress-text">第 1 / 24 题</div>
-      </div>
-      <div class="question-card">
-        <div class="question-text" id="question-text"></div>
-        <div class="options" id="options"></div>
-      </div>
-      <div class="test-nav">
-        <button class="btn-ghost" id="btn-prev">← 上一题</button>
-        <button class="btn-primary" id="btn-next" disabled>下一题 →</button>
-      </div>
-    </div>
-
-    <!-- === RESULT === -->
-    <div class="view" id="view-result">
-      <div class="result">
-        <div class="result-section pair-card" id="pair-result" style="display:none"></div>
-        <div class="result-hero">
-          <div class="result-cat-svg" id="result-cat-svg"></div>
-          <div class="result-type-name" id="result-type-name"></div>
-          <div class="result-type-code" id="result-type-code"></div>
-          <div class="result-group-badge" id="result-group-badge"></div>
-          <div class="result-tags" id="result-tags"></div>
-        </div>
-
-        <div class="result-section">
-          <h3>📖 <span id="result-cat-name-display"></span>的性格</h3>
-          <div class="result-desc" id="result-desc"></div>
-        </div>
-
-        <div class="result-section">
-          <h3>🐾 标志语录</h3>
-          <ul class="quotes-list" id="result-quotes"></ul>
-        </div>
-
-        <div class="result-section">
-          <h3>📊 维度分析</h3>
-          <div class="dim-bars" id="dim-bars"></div>
-        </div>
-
-        <div class="result-section">
-          <h3>✨ 能力画像</h3>
-          <div class="trait-row">
-            <div class="trait-card good">
-              <h4>优点</h4>
-              <div class="trait-items" id="result-strengths"></div>
-            </div>
-            <div class="trait-card bad">
-              <h4>缺点</h4>
-              <div class="trait-items" id="result-weaknesses"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="result-section">
-          <h3>🤝 猫咪社交</h3>
-          <div class="match-row">
-            <div class="match-card">
-              <h4>🧡 最佳拍档</h4>
-              <div class="match-items" id="result-best-match"></div>
-            </div>
-            <div class="match-card">
-              <h4>⚡ 冤家对手</h4>
-              <div class="match-items" id="result-challenging"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="result-section paywall" id="paywall-section">
-          <h3>🔐 <span id="paywall-cat-name"></span>的深度报告</h3>
-          <p class="pw-trust">报告框架参考猫科人格研究「Feline Five」编写</p>
-          <ul class="paywall-list">
-            <li><span class="pw-icon">📖</span>行为翻译词典——每个迷惑行为的真实含义</li>
-            <li><span class="pw-icon">⚖️</span>相处红黑榜——千万别对它做的 5 件事</li>
-            <li><span class="pw-icon">🏠</span>喂养与环境建议——按性格布置它的小天地</li>
-            <li><span class="pw-icon">📊</span>完整维度解读——四个维度逐条深挖</li>
-            <li><span class="pw-icon">🎬</span>AI 写实电影卡片——上传照片，你家猫主演的电影海报</li>
-          </ul>
-          <div class="paywall-sample"><p id="paywall-sample-text"></p></div>
-          <div class="paywall-price"><b>¥9.9</b> <s>¥39</s> <span class="pw-tag">限时内测价</span></div>
-          <button class="btn-primary btn-paywall" id="btn-paywall">解锁完整版 🔓</button>
-        </div>
-
-        <div class="result-section invite-section">
-          <h3>💞 测测和好友猫咪的缘分</h3>
-          <p class="invite-desc">复制邀请链接发给养猫的朋友，TA 家猫测完，自动揭晓两只猫的相性！</p>
-          <button class="btn-secondary" id="btn-invite">复制邀请链接 🔗</button>
-        </div>
-
-        <div class="result-actions">
-          <button class="btn-primary" id="btn-poster">生成分享海报 📸</button>
-          <button class="btn-secondary" id="btn-retest">重新测试 🔄</button>
-        </div>
-
-        <div class="explore-section">
-          <h3>🔍 探索全部 16 种喵格</h3>
-          <div class="explore-grid" id="explore-grid"></div>
-        </div>
-      </div>
-      <div class="footer">
-        喵格测试 · 题目参考「Feline Five」猫科人格研究<br>结果偏娱乐，请配合猫条食用 🐟
-      </div>
-    </div>
-
-    <!-- === ARCHIVE === -->
-    <div class="view" id="view-archive">
-      <div class="archive">
-        <h2 class="page-title">📚 猫咪档案</h2>
-        <p class="archive-progress" id="archive-progress"></p>
-        <div id="archive-list"></div>
-      </div>
-      <div class="footer">同一只猫可以重测 · 档案保存在本机浏览器</div>
-    </div>
-
-    <!-- === MINE === -->
-    <div class="view" id="view-mine">
-      <div class="mine">
-        <h2 class="page-title">😺 我的</h2>
-        <div class="result-section">
-          <h3>🔓 已解锁内容</h3>
-          <p class="mine-text">支付功能上线后，你解锁的深度报告和 AI 专属卡片会出现在这里。</p>
-        </div>
-        <div class="result-section">
-          <h3>🔬 科学依据</h3>
-          <p class="mine-text">题目设计参考猫科动物人格研究「Feline Five」五维模型（Litchfield et al., 2017，基于 2,802 只猫的行为数据），并结合 MBTI 框架做了娱乐化改编。比星座科学一点，比论文好玩很多。</p>
-        </div>
-        <div class="result-section">
-          <h3>🔒 隐私</h3>
-          <p class="mine-text">所有数据仅保存在你自己的设备上。<a class="mine-link" id="privacy-link-2">查看隐私说明</a></p>
-        </div>
-        <div class="result-section">
-          <h3>💬 联系与反馈</h3>
-          <p class="mine-text">有想法或发现 bug？欢迎反馈，帮喵格测试变得更好。</p>
-        </div>
-      </div>
-      <div class="footer">喵格测试 V0.5</div>
-    </div>
+  <div class="tip">
+    <p>🐾 正在进入喵格研究所……</p>
+    <noscript><p><a href="v2/">点此进入</a></p></noscript>
   </div>
-
-  <!-- TABBAR -->
-  <nav class="tabbar" id="tabbar">
-    <button class="tab-btn active" data-view="landing"><span class="tab-icon">🐾</span>测一测</button>
-    <button class="tab-btn" data-view="archive"><span class="tab-icon">📚</span>猫咪档案</button>
-    <button class="tab-btn" data-view="mine"><span class="tab-icon">😺</span>我的</button>
-  </nav>
-
-  <!-- POSTER MODAL -->
-  <div class="poster-modal" id="poster-modal">
-    <div class="poster-inner">
-      <button class="poster-close" id="poster-close">✕</button>
-      <h3>分享海报</h3>
-      <div class="poster-canvas-wrap">
-        <canvas id="poster-canvas"></canvas>
-      </div>
-      <div class="poster-actions">
-        <button class="btn-primary" id="btn-save-poster">保存图片 💾</button>
-      </div>
-      <p style="font-size:12px;color:#9c8168;margin-top:10px">长按图片可保存到相册</p>
-    </div>
-  </div>
-
-  <!-- TYPE DETAIL MODAL -->
-  <div class="type-modal" id="type-modal">
-    <div class="type-modal-inner" id="type-modal-inner"></div>
-  </div>
-
-  <!-- PAYWALL MODAL -->
-  <div class="type-modal" id="paywall-modal">
-    <div class="type-modal-inner">
-      <button class="poster-close" id="paywall-close">✕</button>
-      <div id="paywall-step1">
-        <h2 style="font-family:var(--font-fun);font-size:20px;color:var(--ink);margin-bottom:14px;text-align:center">🔐 深度报告 + AI 专属卡片</h2>
-        <ul class="paywall-list">
-          <li><span class="pw-icon">📖</span>行为翻译词典</li>
-          <li><span class="pw-icon">⚖️</span>相处红黑榜</li>
-          <li><span class="pw-icon">🏠</span>喂养与环境建议</li>
-          <li><span class="pw-icon">📊</span>完整维度解读</li>
-          <li><span class="pw-icon">🎬</span>AI 写实电影卡片（含 1 次免费重生成）</li>
-        </ul>
-        <div class="paywall-price" style="text-align:center;margin:14px 0"><b>¥9.9</b> <s>¥39</s> <span class="pw-tag">限时内测价</span></div>
-        <button class="btn-primary" id="btn-unlock" style="width:100%">立即解锁 ¥9.9</button>
-        <p style="font-size:11px;color:var(--text-secondary);text-align:center;margin-top:10px">虚拟内容，解锁后不支持退款</p>
-      </div>
-      <div id="paywall-step2" style="display:none;text-align:center">
-        <div style="font-size:44px;margin:10px 0">🚧</div>
-        <h2 style="font-family:var(--font-fun);font-size:20px;color:var(--ink);margin-bottom:12px">内测名额开放中</h2>
-        <p id="paywall-contact" style="font-size:14px;line-height:1.9;color:var(--text)"></p>
-      </div>
-    </div>
-  </div>
-
-  <!-- PRIVACY MODAL -->
-  <div class="type-modal" id="privacy-modal">
-    <div class="type-modal-inner">
-      <button class="poster-close" id="privacy-close">✕</button>
-      <h2 style="font-family:var(--font-fun);font-size:20px;color:var(--ink);margin-bottom:14px">🔒 隐私说明</h2>
-      <div style="font-size:14px;line-height:1.9;color:var(--text)">
-        <p style="margin-bottom:10px">· 本测试为娱乐向性格测试，结果仅供参考，不构成任何专业建议。</p>
-        <p style="margin-bottom:10px">· 你输入的猫咪名字、品种和答题记录<b>仅在你的设备上处理</b>，用于生成测试结果，不会上传或存储到任何服务器。</p>
-        <p style="margin-bottom:10px">· 分享海报由你的设备本地生成，是否保存、分享完全由你决定。</p>
-        <p>· 未来小程序版本如涉及照片上传等功能，会在收集前另行征得你的同意。</p>
-      </div>
-    </div>
-  </div>
-
-  <script src="cats.js"></script>
-  <script src="pairing.js"></script>
-  <script src="analytics.js"></script>
-  <script src="app.js"></script>
-
-  <!-- Landing page cat SVG -->
-  <script>
-    document.getElementById('landing-cat').innerHTML = `
-      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <g fill="none" stroke="#46342a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <ellipse cx="100" cy="90" rx="45" ry="38" fill="#fffdf8"/>
-          <path d="M62 74 L48 38 L76 62" fill="#fffdf8"/>
-          <path d="M138 74 L152 38 L124 62" fill="#fffdf8"/>
-          <path d="M60 68 L50 42 L74 58" stroke="#ffb3c1" fill="#ffb3c1" opacity="0.5"/>
-          <path d="M140 68 L150 42 L126 58" stroke="#ffb3c1" fill="#ffb3c1" opacity="0.5"/>
-          <circle cx="82" cy="85" r="8" fill="white"/>
-          <circle cx="118" cy="85" r="8" fill="white"/>
-          <circle cx="84" cy="84" r="4.5" fill="#46342a"/>
-          <circle cx="120" cy="84" r="4.5" fill="#46342a"/>
-          <circle cx="86" cy="82" r="2" fill="white"/>
-          <circle cx="122" cy="82" r="2" fill="white"/>
-          <path d="M96 98 L100 102 L104 98" fill="#ff9db5"/>
-          <path d="M100 102 L100 105"/>
-          <path d="M94 105 Q100 110 106 105"/>
-          <line x1="62" y1="94" x2="78" y2="94"/>
-          <line x1="62" y1="99" x2="76" y2="99"/>
-          <line x1="138" y1="94" x2="122" y2="94"/>
-          <line x1="138" y1="99" x2="124" y2="99"/>
-          <path d="M65 120 Q58 158 78 172 Q100 182 122 172 Q142 158 135 120" fill="#fffdf8"/>
-          <ellipse cx="82" cy="174" rx="10" ry="7" fill="#fffdf8"/>
-          <ellipse cx="118" cy="174" rx="10" ry="7" fill="#fffdf8"/>
-          <path d="M135 150 Q162 140 165 118 Q166 108 158 105" stroke-width="3"/>
-          <text x="100" y="155" font-size="16" fill="#f2762e" text-anchor="middle" stroke="none" font-weight="bold">?</text>
-        </g>
-      </svg>`;
-  </script>
 </body>
 </html>
