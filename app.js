@@ -390,15 +390,29 @@
   // === POSTER ===
   document.getElementById('btn-poster').addEventListener('click', generatePoster);
 
-  function svgToImage(svgStr) {
+  // 按类型加载头像 PNG（供海报 canvas 使用）
+  function loadCatImage(code) {
     return new Promise(resolve => {
-      const blob = new Blob([svgStr], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(blob);
       const img = new Image();
-      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-      img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
-      img.src = url;
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = catImgSrc(code);
     });
+  }
+
+  // 圆形裁切 + cover 填充绘制头像，避免白底方角外露与拉伸变形
+  function drawCatCircle(ctx, img, cx, cy, r) {
+    if (!img) return;
+    const iw = img.naturalWidth || img.width;
+    const ih = img.naturalHeight || img.height;
+    const side = Math.min(iw, ih);
+    const sx = (iw - side) / 2, sy = (ih - side) / 2;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.drawImage(img, sx, sy, side, side, cx - r, cy - r, r * 2, r * 2);
+    ctx.restore();
   }
 
   // --- 海报绘制辅助：贴纸风卡片 / 胶囊 / 标题条 ---
@@ -480,9 +494,9 @@
 
     // 预加载全部头像：主角 + 拍档×2 + 冤家×2
     const [mainImg, ...matchImgs] = await Promise.all([
-      svgToImage(catSVG(t.code)),
-      ...t.bestMatch.slice(0, 2).map(c => svgToImage(catSVG(c))),
-      ...t.challenging.slice(0, 2).map(c => svgToImage(catSVG(c))),
+      loadCatImage(t.code),
+      ...t.bestMatch.slice(0, 2).map(c => loadCatImage(c)),
+      ...t.challenging.slice(0, 2).map(c => loadCatImage(c)),
     ]);
 
     // --- 背景 ---
@@ -514,7 +528,7 @@
     ctx.beginPath(); ctx.arc(ax, ay, ar, 0, Math.PI * 2);
     ctx.fillStyle = '#fff'; ctx.fill();
     ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.stroke();
-    if (mainImg) ctx.drawImage(mainImg, ax - 88, ay - 88, 176, 176);
+    drawCatCircle(ctx, mainImg, ax, ay, ar);
 
     ctx.textAlign = 'left';
     const nameLine = `${catName} 是……`;
@@ -576,7 +590,7 @@
         ctx.beginPath(); ctx.arc(mx, my, 40, 0, Math.PI * 2);
         ctx.fillStyle = '#fff'; ctx.fill();
         ctx.strokeStyle = INK; ctx.lineWidth = 2.5; ctx.stroke();
-        if (cb.imgs[i]) ctx.drawImage(cb.imgs[i], mx - 34, my - 34, 68, 68);
+        drawCatCircle(ctx, cb.imgs[i], mx, my, 40);
         ctx.font = '18px "PingFang SC", sans-serif';
         ctx.fillStyle = INK;
         ctx.textAlign = 'center';

@@ -43,7 +43,7 @@
 
           <div class="form-row">
             <label>猫咪姓名</label>
-            <input type="text" id="cat-name" placeholder="请如实填写" maxlength="12" autocomplete="off">
+            <input type="text" id="cat-name" placeholder="请填写主子尊称" maxlength="12" autocomplete="off">
           </div>
           <div class="form-row">
             <label>品种花色</label>
@@ -61,7 +61,10 @@
               <option value="ragdoll">布偶猫</option>
               <option value="siamese">暹罗猫</option>
               <option value="garfield">加菲（异国短毛）</option>
-              <option value="devon">德文 / 无毛猫</option>
+              <option value="devon">德文</option>
+              <option value="sphynx">斯芬克斯（无毛猫）</option>
+              <option value="maine">缅因猫</option>
+              <option value="munchkin">曼基康</option>
               <option value="other">其他</option>
             </select>
           </div>
@@ -91,13 +94,52 @@
         <span class="file-label">行为观察记录</span>
         <span class="test-no" id="test-no">NO.01 / 24</span>
       </div>
+      <div class="cat-track" id="cat-track">
+        <div class="cat-walker" id="cat-walker">
+          <svg viewBox="0 0 64 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <g fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <!-- 竖起的尾巴（开心姿态） -->
+              <path class="cw-tail" d="M14 26 Q6 22 8 12 Q9 6 14 6" />
+              <!-- 身体 -->
+              <path d="M14 26 Q13 15 24 15 L44 15 Q52 15 52 24" fill="var(--card)" />
+              <!-- 头 -->
+              <circle cx="50" cy="18" r="9" fill="var(--card)" />
+              <!-- 耳朵 -->
+              <path d="M45 11 L43 4 L49 9" fill="var(--card)" />
+              <path d="M54 10 L57 4 L58 11" fill="var(--card)" />
+              <!-- 眼睛：两个点 -->
+              <circle class="cw-eye" cx="48" cy="17" r="1.4" fill="var(--ink)" stroke="none" />
+              <circle class="cw-eye" cx="53" cy="17" r="1.4" fill="var(--ink)" stroke="none" />
+              <!-- 开心弧嘴 -->
+              <path d="M49.5 21 q2 2 4 0" />
+              <!-- 四条走路的腿 -->
+              <path class="cw-leg cw-leg1" d="M22 26 L22 34" />
+              <path class="cw-leg cw-leg2" d="M30 26 L30 34" />
+              <path class="cw-leg cw-leg3" d="M40 26 L40 34" />
+              <path class="cw-leg cw-leg4" d="M48 26 L48 34" />
+            </g>
+          </svg>
+        </div>
+      </div>
       <div class="ruler"><div class="ruler-fill" id="ruler-fill"></div></div>
 
       <div class="q-paper" id="q-paper">
         <div class="q-meta">观察对象：<b id="q-cat"></b> <span class="q-clip">📎</span></div>
         <div class="q-text" id="question-text"></div>
         <div class="options" id="options"></div>
-        <div class="q-stamp" id="q-stamp">已记录</div>
+        <div class="q-stamp" id="q-stamp" aria-label="已记录">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <g fill="var(--red)">
+              <!-- 主掌垫 -->
+              <path d="M32 39 C24 39 18 45 18 51 C18 57 24 59 32 59 C40 59 46 57 46 51 C46 45 40 39 32 39 Z" />
+              <!-- 四个趾垫 -->
+              <ellipse cx="15" cy="31" rx="5.4" ry="7" transform="rotate(-22 15 31)" />
+              <ellipse cx="26" cy="22" rx="5.4" ry="7.6" transform="rotate(-8 26 22)" />
+              <ellipse cx="38" cy="22" rx="5.4" ry="7.6" transform="rotate(8 38 22)" />
+              <ellipse cx="49" cy="31" rx="5.4" ry="7" transform="rotate(22 49 31)" />
+            </g>
+          </svg>
+        </div>
       </div>
 
       <button class="ghost" id="btn-prev">← 修改上一条记录</button>

@@ -400,6 +400,54 @@ body {
   transition: width 0.35s ease;
 }
 
+/* 走路猫（浮在进度条上方，位置与进度对应） */
+.cat-track {
+  position: relative;
+  height: 34px;
+  margin: 4px 0 2px;
+  padding: 0 4px;
+}
+/* 走路的猫 */
+.cat-walker {
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 44px; height: 28px;
+  transform: translateX(-50%);
+  transition: left 0.45s cubic-bezier(.34,1.2,.64,1);
+  animation: cw-bob 0.5s ease-in-out infinite;
+}
+.cat-walker svg { width: 100%; height: 100%; display: block; }
+/* 身体上下颠一颠 */
+@keyframes cw-bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(-1.5px); }
+}
+/* 竖尾巴开心地左右摆 */
+.cw-tail {
+  transform-box: fill-box;
+  transform-origin: right bottom;
+  animation: cw-tail 0.7s ease-in-out infinite;
+}
+@keyframes cw-tail {
+  0%, 100% { transform: rotate(-7deg); }
+  50%      { transform: rotate(9deg); }
+}
+/* 四条腿交替迈步 */
+.cw-leg {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: cw-step 0.5s ease-in-out infinite;
+}
+.cw-leg1, .cw-leg4 { animation-delay: 0s; }
+.cw-leg2, .cw-leg3 { animation-delay: 0.25s; }
+@keyframes cw-step {
+  0%, 100% { transform: rotate(-16deg); }
+  50%      { transform: rotate(16deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cat-walker, .cw-tail, .cw-leg { animation: none; }
+}
+
 /* 观察记录纸 */
 .q-paper {
   background: var(--card);
@@ -469,20 +517,22 @@ body {
 }
 .options.locked .option-btn { pointer-events: none; }
 
-/* "已记录"印章 */
+/* "已记录"猫爪印 */
 .q-stamp {
   position: absolute;
-  right: 18px;
-  top: 14px;
-  font-family: var(--font-seal);
-  font-size: 22px;
-  color: var(--red);
-  border: 3px solid var(--red);
-  border-radius: 6px;
-  padding: 2px 10px;
-  transform: rotate(-14deg) scale(1.8);
+  right: 16px;
+  top: 10px;
+  width: 46px;
+  height: 46px;
+  transform: rotate(-14deg);
   opacity: 0;
   pointer-events: none;
+}
+.q-stamp svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0.82;
 }
 .q-stamp.show { animation: stampSlam 0.32s ease forwards; }
 @keyframes stampSlam {
@@ -1742,3 +1792,32 @@ body {
   .folder h1 { font-size: 26px; }
   .idc-row .idc-type { font-size: 17px; }
 }
+
+/* === 猫咪头像图片（16型猫咪头像 PNG，替换原线条 SVG）=== */
+/* catSVG() 现在返回 <img class="cat-pic">，用 cover 裁切填满各容器 */
+.cat-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* 各容器裁切，避免白底外露 */
+.mug .mug-svg,
+.idc-svg,
+.shot .shot-svg,
+.us-thumb,
+.file-row .fr-svg,
+.cr-svg,
+.photo-result .pr-svg { overflow: hidden; }
+/* 写真页容器改为裁切填满（原 svg 固定 220px 居中，img 直接铺满容器）*/
+.photo-result .pr-svg { display: block; }
+.photo-result .pr-svg .cat-pic { height: 100%; }
+/* 三视图：侧面翻转 / 背面剪影（原作用于 svg，改指向 img）*/
+.shot .flip .cat-pic { transform: scaleX(-1); }
+.shot .sil .cat-pic { filter: brightness(0) opacity(0.78); }
+/* 进化对比“未来版” & 写真页的暖色胶片滤镜 */
+.us-thumb.pro .cat-pic,
+.photo-result .pr-svg .cat-pic {
+  filter: sepia(0.55) saturate(1.5) contrast(1.15) drop-shadow(0 0 7px rgba(255, 200, 120, 0.65));
+}
+

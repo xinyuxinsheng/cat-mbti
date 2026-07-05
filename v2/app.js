@@ -173,7 +173,7 @@
     catName = input.value.trim();
     if (!catName) {
       input.style.borderBottomColor = '#b23a2c';
-      input.placeholder = '姓名为必填项！';
+      input.placeholder = '主子尊称是必填项哦';
       input.focus();
       return;
     }
@@ -192,7 +192,9 @@
 
     document.getElementById('test-no').textContent =
       `NO.${String(currentQ + 1).padStart(2, '0')} / ${total}`;
-    document.getElementById('ruler-fill').style.width = ((currentQ + 1) / total * 100) + '%';
+    const pct = (currentQ + 1) / total * 100;
+    document.getElementById('ruler-fill').style.width = pct + '%';
+    document.getElementById('cat-walker').style.left = pct + '%';
     document.getElementById('q-cat').textContent = catName;
     document.getElementById('question-text').textContent = q.text;
 
@@ -487,14 +489,13 @@
     gotoLocked();
   });
 
-  function svgToImage(svgStr) {
+  // 按类型加载头像 PNG（供 canvas 导出使用）
+  function loadCatImage(code) {
     return new Promise(resolve => {
-      const blob = new Blob([svgStr], { type: 'image/svg+xml' });
-      const url = URL.createObjectURL(blob);
       const img = new Image();
-      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-      img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
-      img.src = url;
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = catImgSrc(code);
     });
   }
 
@@ -542,7 +543,7 @@
 
     const INK = '#2f261c', RED = '#b23a2c', SOFT = '#6f5c44', PAPER = '#f4ead2', CARD = '#fbf4e2';
     try { await document.fonts.ready; } catch (e) { /* 继续 */ }
-    const mainImg = await svgToImage(catSVG(t.code));
+    const mainImg = await loadCatImage(t.code);
 
     // 牛皮纸底 + 边框
     ctx.fillStyle = PAPER;
@@ -574,7 +575,7 @@
     ctx.fillRect(px, py, ps, ps);
     ctx.strokeStyle = INK; ctx.lineWidth = 3;
     ctx.strokeRect(px, py, ps, ps);
-    if (mainImg) ctx.drawImage(mainImg, px + 8, py + 8, ps - 16, ps - 16);
+    if (mainImg) drawImageCover(ctx, mainImg, px + 8, py + 8, ps - 16, ps - 16);
     ctx.font = '12px "Courier New", monospace';
     ctx.fillStyle = SOFT;
     ctx.textAlign = 'center';
@@ -1219,8 +1220,8 @@
     if (img) {
       drawImageCover(ctx, img, px + 8, py + 8, pw - 16, ph - 16);
     } else {
-      const svgImg = await svgToImage(catSVG(rec.code));
-      if (svgImg) ctx.drawImage(svgImg, px + pw / 2 - 200, py + ph / 2 - 200, 400, 400);
+      const catImg = await loadCatImage(rec.code);
+      if (catImg) drawImageCover(ctx, catImg, px + 8, py + 8, pw - 16, ph - 16);
     }
     ctx.strokeStyle = INK; ctx.lineWidth = 4;
     ctx.strokeRect(px, py, pw, ph);

@@ -1238,3 +1238,20 @@ body {
   .question-text { font-size: 16px; }
   .result-type-name { font-size: 28px; }
 }
+
+/* === 猫咪头像图片（16型猫咪头像 PNG，替换原线条 SVG）=== */
+/* catSVG() 现在返回 <img class="cat-pic">，用 cover 裁切填满各容器，避免白底方角外露与拉伸 */
+.cat-pic {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* 圆形容器裁切 */
+.result-cat-svg,
+.pair-svg,
+.explore-card .ec-svg,
+.archive-card .ac-svg { overflow: hidden; }
+/* 结果页主头像保留呼吸动画 */
+.result-cat-svg .cat-pic { animation: bob 3.4s ease-in-out infinite; }
+
