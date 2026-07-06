@@ -1306,18 +1306,17 @@
 
   (function initCounter() {
     const el = document.getElementById('bureau-count');
+    // 严格单调分钟级函数：任何时刻只增不减（跨天不跳变）。
+    // 每日约 +137，按分钟均摊；数值与旧公式（基数 236208 起）平滑衔接。
+    // TODO(stats): 档案数 ≥ 阈值后切真实统计（接入云数据库后替换为后端下发的 total）。
     const calc = () => {
-      const days = Math.floor((Date.now() - new Date('2026-06-01T00:00:00+08:00').getTime()) / 86400000);
-      const d = new Date();
-      return 236208 + days * 137 + d.getHours() * 6 + Math.floor(d.getMinutes() / 12);
+      const minutes = Math.floor((Date.now() - new Date('2026-06-01T00:00:00+08:00').getTime()) / 60000);
+      return 236208 + Math.floor(minutes * 137 / 1440);
     };
-    let n = calc();
     const fmt = x => x.toLocaleString('en-US');
-    el.textContent = fmt(n);
-    // 页面停留期间偶尔 +1，制造实时感
-    setInterval(() => {
-      if (Math.random() < 0.5) { n++; el.textContent = fmt(n); }
-    }, 15000);
+    el.textContent = fmt(calc());
+    // 每 60s 用同一函数重算刷新（分钟推进自然 +0/+1，绝不回退）。
+    setInterval(() => { el.textContent = fmt(calc()); }, 60000);
   })();
 
   // ============ 接收好友档案（分享链接进入） ============
