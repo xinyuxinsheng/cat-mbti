@@ -592,8 +592,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  background: var(--ink);
-  color: var(--paper);
+  /* 顶栏主题印泥红（对齐小程序 $red，弃深色）*/
+  background: var(--red);
+  color: #f8ecd9;
   padding: 10px 16px 8px;
 }
 .idc-title {
@@ -1820,4 +1821,219 @@ body {
 .photo-result .pr-svg .cat-pic {
   filter: sepia(0.55) saturate(1.5) contrast(1.15) drop-shadow(0 0 7px rgba(255, 200, 120, 0.65));
 }
+
+/* ============================================================
+   2026-07-08 对齐小程序：隐私勾选 / 科学折叠 / 档案照三态 /
+   猫咪写真板块 / 上传弹窗 / 隐私协议弹窗 / 页脚 / 折叠
+   ============================================================ */
+
+/* —— 建档前《隐私协议》勾选行 —— */
+.privacy-agree {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  flex-wrap: wrap;
+}
+.pa-box {
+  width: 18px; height: 18px;
+  flex: 0 0 auto;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  color: var(--red);
+  cursor: pointer;
+  line-height: 1;
+}
+.pa-box.checked { background: rgba(178, 58, 44, 0.08); }
+.pa-text { cursor: pointer; }
+.pa-link { color: var(--red); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+
+/* —— 科学依据折叠区 —— */
+.sci-fold {
+  margin-top: 28px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 rgba(47, 38, 28, 0.12);
+  overflow: hidden;
+}
+.sci-fold-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  cursor: pointer;
+}
+.sci-fold-title { font-family: var(--font-head); font-size: 15px; letter-spacing: 2px; }
+.sci-fold-arrow { font-size: 13px; color: var(--ink-soft); }
+.sci-fold-body { padding: 0 16px 16px; }
+
+/* —— 猫格证：档案照三态徽章 + AI 角标 —— */
+.idc-photo { cursor: pointer; }
+.idc-chip {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 1.5px 8px;
+  border-radius: 2px;
+}
+.idc-chip.base { color: var(--ink-soft); border: 1.5px solid var(--ink-soft); }
+.idc-chip.making { color: #fff; background: var(--blue); border: 1.5px solid var(--blue); }
+.idc-chip.done { color: var(--ink); background: #e9c65a; border: 1.5px solid #c79a3b; }
+.idc-svg { position: relative; }
+.idc-ai-badge {
+  position: absolute;
+  bottom: 2px; right: 2px;
+  font-family: var(--mono);
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #f0d9a8;
+  background: rgba(23, 17, 11, 0.72);
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+/* —— 猫咪写真照板块（左竖排 + 右 16:9 框） —— */
+.petphoto {
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 14px;
+  margin-bottom: 20px;
+  box-shadow: 4px 4px 0 rgba(47, 38, 28, 0.12);
+}
+.pp-row { display: flex; gap: 12px; align-items: stretch; cursor: pointer; }
+.petphoto.done .pp-row, .petphoto.making .pp-row { cursor: default; }
+.pp-title-vert {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+.pp-vc {
+  font-family: var(--font-head);
+  font-size: 17px;
+  letter-spacing: 2px;
+  color: var(--ink);
+  text-align: center;
+}
+.pp-frame16 {
+  flex: 1;
+  min-width: 0;
+  aspect-ratio: 16 / 9;
+  border: 2px solid var(--ink);
+  background: var(--paper-2);
+  position: relative;
+  overflow: hidden;
+}
+.pp-sample16, .pp-shot, .pp-making { position: absolute; inset: 0; }
+.pp-sample16 {
+  background:
+    repeating-linear-gradient(45deg, rgba(47,38,28,0.05) 0 10px, transparent 10px 20px),
+    var(--paper-2);
+  display: flex; align-items: center; justify-content: center;
+}
+.pp-overlay {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: rgba(47, 38, 28, 0.55);
+  padding: 6px 0;
+  text-align: center;
+}
+.pp-overlay-t { color: var(--paper); font-size: 12px; letter-spacing: 1px; }
+.pp-shot-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pp-ai-tag {
+  position: absolute;
+  left: 6px; bottom: 6px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: #f0d9a8;
+  background: rgba(23, 17, 11, 0.7);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+.pp-making { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 0 16px; }
+.pp-making-t { font-family: var(--font-head); font-size: 14px; letter-spacing: 1px; color: var(--ink); }
+.pp-bar { width: 70%; height: 8px; border: 1.5px solid var(--ink); border-radius: 999px; overflow: hidden; background: var(--card); }
+.pp-fill { height: 100%; width: 45%; background: repeating-linear-gradient(-45deg, var(--red) 0 8px, #c9564a 8px 16px); animation: ppFill 1.1s ease-in-out infinite alternate; }
+@keyframes ppFill { from { width: 25%; } to { width: 92%; } }
+.pp-making-s { font-size: 11px; color: var(--ink-soft); }
+.pp-foot { text-align: center; font-size: 11.5px; color: var(--ink-soft); margin-top: 10px; letter-spacing: 0.5px; }
+
+/* —— 上传弹窗 —— */
+.upload-inner { max-width: 360px; text-align: center; }
+.upload-photo {
+  width: 150px; height: 150px;
+  margin: 0 auto 14px;
+  background: #fff;
+  border: 2px solid var(--ink);
+  box-shadow: 0 0 0 3px var(--card), 0 0 0 4.5px var(--ink-soft);
+  position: relative;
+  overflow: hidden;
+}
+.upload-photo svg, .upload-photo .cat-pic { width: 100%; height: 100%; }
+.upload-desc { font-size: 13.5px; line-height: 1.8; color: var(--ink); margin-bottom: 6px; }
+.upload-note { font-size: 11.5px; color: var(--ink-soft); margin-bottom: 6px; }
+.upload-inner .stamp-btn { width: 100%; }
+
+/* —— 隐私协议弹窗 —— */
+.policy-inner { max-width: 420px; }
+.pp-head { text-align: center; margin-bottom: 12px; }
+.pp-title { font-family: var(--font-head); font-size: 22px; letter-spacing: 4px; }
+.pp-sub { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; color: var(--ink-soft); margin-top: 3px; }
+.pp-scroll { max-height: 52vh; overflow-y: auto; text-align: left; padding-right: 4px; }
+.pp-h1 { font-family: var(--font-head); font-size: 17px; letter-spacing: 2px; margin: 4px 0 8px; }
+.pp-h2 { font-family: var(--font-head); font-size: 14px; letter-spacing: 1px; color: var(--red); margin: 12px 0 6px; }
+.pp-p { font-size: 13px; line-height: 1.85; color: var(--ink); margin-bottom: 6px; }
+.pp-highlights { display: flex; flex-direction: column; gap: 10px; text-align: left; max-height: 50vh; overflow-y: auto; }
+.pp-card {
+  display: flex;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  border-left: 3px solid var(--blue);
+  padding: 10px 12px;
+}
+.pp-card-icon { font-size: 20px; flex: 0 0 auto; }
+.pp-card-title { font-family: var(--font-head); font-size: 14px; letter-spacing: 1px; margin-bottom: 3px; }
+.pp-card-text { font-size: 12.5px; line-height: 1.7; color: var(--ink-soft); }
+.pp-fulllink { text-align: center; font-size: 12.5px; color: var(--red); margin-top: 12px; cursor: pointer; }
+.policy-inner .stamp-btn { width: 100%; margin-top: 16px; }
+
+/* —— 档案柜页脚：隐私 + 联系 —— */
+.cab-footlinks { margin-top: 8px; }
+.footlink-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 2px;
+  border-top: 1px dashed var(--line);
+  cursor: pointer;
+}
+.footlink-label { font-size: 13px; color: var(--ink); letter-spacing: 1px; }
+.footlink-go { font-size: 12px; color: var(--ink-soft); }
+.footlink-block { border-top: 1px dashed var(--line); padding: 12px 2px 4px; }
+.footlink-block .footlink-label { display: block; margin-bottom: 4px; }
+.footlink-hint { display: block; font-size: 11.5px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 8px; }
+.footlink-line { display: block; font-size: 12px; color: var(--ink-soft); padding: 3px 0; cursor: pointer; }
+.footlink-line .mono { color: var(--ink); }
+
+/* —— 档案/好友列表折叠 —— */
+.fold-toggle {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--red);
+  letter-spacing: 1px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.fold-toggle:hover { text-decoration: underline; text-underline-offset: 3px; }
 

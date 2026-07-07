@@ -70,6 +70,13 @@
           </div>
 
           <button class="stamp-btn" id="btn-start">开 始 建 档</button>
+
+          <!-- 建档前《隐私协议》勾选门槛（档案馆风：墨线圆框勾选 + 红字书名号可点） -->
+          <div class="privacy-agree">
+            <div class="pa-box" id="pa-box"></div>
+            <span class="pa-text" id="pa-text">阅读并同意</span>
+            <span class="pa-link" id="pa-link">《隐私协议》</span>
+          </div>
         </div>
       </div>
 
@@ -85,7 +92,29 @@
         <div class="wall-grid" id="wall-grid"></div>
       </section>
 
-      <footer class="foot">科学依据见「我的」· 结果偏娱乐，请配合猫条食用</footer>
+      <!-- 科学依据折叠区（自「我的」页迁入 · 文案一字不改）：默认收起，克制不拖长首屏 -->
+      <section class="sci-fold">
+        <div class="sci-fold-head" id="sci-fold-head">
+          <span class="sci-fold-title">🔬 科学依据</span>
+          <span class="sci-fold-arrow" id="sci-fold-arrow">▾</span>
+        </div>
+        <div class="sci-fold-body" id="sci-fold-body" style="display:none">
+          <p class="d-text">观察项与深度档案内容参考以下研究与指南，结合 MBTI 框架做趣味化改编：</p>
+          <ul class="ref-list">
+            <li>[1] Litchfield et al. (2017)「Feline Five」五维猫格模型 · <i>PLOS ONE</i>（2,802 只猫行为数据）</li>
+            <li>[2] Bradshaw (2013)《Cat Sense》· 家猫行为学科普权威</li>
+            <li>[3] Turner & Bateson (2014)《The Domestic Cat》(3rd ed.) · <i>Cambridge University Press</i></li>
+            <li>[4] Ellis & Bradshaw (2016)《The Trainable Cat》</li>
+            <li>[5] Ellis et al. (2013) AAFP/ISFM 猫环境需求指南（五支柱）· <i>JFMS</i></li>
+            <li>[6] 俄亥俄州立大学 Indoor Pet Initiative 室内猫丰容指南</li>
+            <li>[7] Vitale et al. (2019) 猫对人的依恋类型研究 · <i>Current Biology</i></li>
+            <li>另有 Humphrey 慢眨眼实验、Finka 主人人格研究、Nicastro 叫声研究等，支撑关系解读内容</li>
+          </ul>
+          <p class="d-text ref-note">深度档案里的 [n] 编号即对应上述文献 · 娱乐产品不构成行为学或医疗建议</p>
+        </div>
+      </section>
+
+      <footer class="foot">结果偏娱乐，请配合猫条食用</footer>
     </div>
 
     <!-- ============ 行为观察（答题） ============ -->
@@ -157,9 +186,10 @@
           <span class="idc-en">MEOW MBTI CERTIFICATE</span>
         </div>
         <div class="idc-body">
-          <div class="idc-photo">
+          <div class="idc-photo" id="idc-photo">
             <div class="idc-svg" id="idc-svg"></div>
-            <div class="idc-photo-label">档案照</div>
+            <div class="idc-photo-label">专属档案照</div>
+            <span class="idc-chip base" id="idc-chip">未升级</span>
           </div>
           <div class="idc-fields">
             <div class="idc-row"><span class="k">姓 名</span><b id="idc-name"></b></div>
@@ -175,6 +205,17 @@
           <div class="barcode"></div>
           <span class="idc-no mono" id="idc-no"></span>
         </div>
+      </div>
+
+      <!-- 猫咪写真照板块（左竖排五字 + 右 16:9 横版照片区；五态在框内切内容） -->
+      <div class="petphoto" id="petphoto">
+        <div class="pp-row" id="pp-row">
+          <div class="pp-title-vert">
+            <span class="pp-vc">猫</span><span class="pp-vc">咪</span><span class="pp-vc">写</span><span class="pp-vc">真</span><span class="pp-vc">照</span>
+          </div>
+          <div class="pp-frame16" id="pp-frame16"></div>
+        </div>
+        <p class="pp-foot" id="pp-foot">解密档案后可生成专属头像和写真照</p>
       </div>
 
       <!-- 档案正文 -->
@@ -210,23 +251,18 @@
 
           <div class="preview-label" id="preview-label">—— 样 章 试 阅 ——</div>
 
-          <div class="dict-title">《行为翻译词典》节选</div>
+          <div class="dict-title" id="dict-title">《行为应对宝典》精选</div>
           <div id="dict-entries"></div>
           <div class="dict-more" id="dict-more">…… 其余 10 条注解已加密，调阅后解密</div>
-
-          <div class="dict-title" style="margin-top:22px">《人格写真照》样例 · 三视图特摄</div>
-          <div class="mugshots" id="mugshots"></div>
-          <div class="feature-table" id="feature-table"></div>
-          <p class="tiny" id="mug-note">▲ 样例为档案简笔画示意 · 正式版上传照片后，由 AI 生成<b>本猫出镜</b>的写实三视图特摄</p>
 
           <div id="deep-extra"></div>
 
           <div class="locked-divider"></div>
           <ul class="locked-list" id="locked-list">
-            <li>▪ 行为翻译词典——完整 12 条档案注解</li>
+            <li>▪ 行为应对宝典——完整 12 条档案注解</li>
             <li>▪ 相处红黑榜——对它的禁忌事项清单</li>
             <li>▪ 喂养环境建议——按喵格布置的生活方案</li>
-            <li>▪ 人格写真照——本猫出镜的三视图特摄（含 1 次重拍）</li>
+            <li>▪ 猫咪写真照——上传照片，AI 生成本猫专属写真与头像</li>
           </ul>
           <div class="price-row" id="deep-price"><b>¥9.9</b><s>¥39.9</s><span class="price-tag">限时内测价</span></div>
           <button class="stamp-btn small" id="btn-unlock">解密全部档案 🔓</button>
@@ -293,74 +329,20 @@
       </div>
 
       <footer class="foot">同一只猫可重新建档 · 档案保存在本地</footer>
-    </div>
 
-    <!-- ============ 写真棚 ============ -->
-    <div class="view" id="view-photo">
-      <header class="bureau-head small-head">
-        <div class="bureau-name" style="font-size:26px">写 真 棚</div>
-        <div class="bureau-sub">AI PHOTO STUDIO</div>
-        <div class="bureau-rule"></div>
-      </header>
-
-      <div class="d-sec">
-        <h3><span class="d-tab">壹</span>上传 3 张 <span id="photo-cat-name"></span> 的照片</h3>
-        <p class="d-text photo-hint">正脸、侧身、全身各一张最佳 · 光线充足、五官清晰的照片生成效果最好</p>
-        <div class="photo-slots">
-          <label class="photo-slot" data-idx="0"><input type="file" accept="image/*" hidden><span class="ps-plus">＋</span><span class="ps-label">正脸</span></label>
-          <label class="photo-slot" data-idx="1"><input type="file" accept="image/*" hidden><span class="ps-plus">＋</span><span class="ps-label">侧身</span></label>
-          <label class="photo-slot" data-idx="2"><input type="file" accept="image/*" hidden><span class="ps-plus">＋</span><span class="ps-label">全身</span></label>
+      <!-- 页脚入口（自「我的」页迁入）：隐私协议 + 联系与反馈 -->
+      <div class="cab-footlinks">
+        <div class="footlink-row" id="footlink-policy">
+          <span class="footlink-label">隐私协议</span>
+          <span class="footlink-go">查看 ›</span>
         </div>
-        <p class="tiny">照片仅在本机用于生成预览，不会上传服务器（正式版将在上传前征得授权）</p>
+        <div class="footlink-block">
+          <span class="footlink-label">联系与反馈</span>
+          <span class="footlink-hint">有想法或发现 bug？欢迎来函，帮喵格研究所变得更好。</span>
+          <span class="footlink-line" id="footlink-email">客服邮箱 <span class="mono">1041063767@qq.com</span></span>
+          <span class="footlink-line" id="footlink-hotline">客服热线 <span class="mono">18260037072</span></span>
+        </div>
       </div>
-
-      <div class="d-sec">
-        <h3><span class="d-tab">贰</span>生成要素 · 自动带入档案</h3>
-        <div class="feature-table" id="photo-keywords"></div>
-      </div>
-
-      <div class="d-sec">
-        <h3><span class="d-tab">叁</span>冲印写真</h3>
-        <div id="photo-stage"></div>
-      </div>
-
-      <div class="r-actions"><button class="ghost" id="btn-photo-back">← 返回档案柜</button></div>
-      <footer class="foot">喵格研究所 · 写真棚（演示模式）</footer>
-    </div>
-
-    <!-- ============ 我的 ============ -->
-    <div class="view" id="view-mine">
-      <header class="bureau-head small-head">
-        <div class="bureau-name" style="font-size:26px">研 究 员</div>
-        <div class="bureau-sub">MY OFFICE</div>
-        <div class="bureau-rule"></div>
-      </header>
-      <section class="dossier">
-        <div class="d-sec">
-          <h3><span class="d-tab">研</span>科学依据</h3>
-          <p class="d-text">观察项与深度档案内容参考以下研究与指南，结合 MBTI 框架做趣味化改编：</p>
-          <ul class="ref-list">
-            <li>[1] Litchfield et al. (2017)「Feline Five」五维猫格模型 · <i>PLOS ONE</i>（2,802 只猫行为数据）</li>
-            <li>[2] Bradshaw (2013)《Cat Sense》· 家猫行为学科普权威</li>
-            <li>[3] Turner & Bateson (2014)《The Domestic Cat》(3rd ed.) · <i>Cambridge University Press</i></li>
-            <li>[4] Ellis & Bradshaw (2016)《The Trainable Cat》</li>
-            <li>[5] Ellis et al. (2013) AAFP/ISFM 猫环境需求指南（五支柱）· <i>JFMS</i></li>
-            <li>[6] 俄亥俄州立大学 Indoor Pet Initiative 室内猫丰容指南</li>
-            <li>[7] Vitale et al. (2019) 猫对人的依恋类型研究 · <i>Current Biology</i></li>
-            <li>另有 Humphrey 慢眨眼实验、Finka 主人人格研究、Nicastro 叫声研究等，支撑关系解读内容</li>
-          </ul>
-          <p class="d-text ref-note">深度档案里的 [n] 编号即对应上述文献 · 娱乐产品不构成行为学或医疗建议</p>
-        </div>
-        <div class="d-sec">
-          <h3><span class="d-tab">密</span>隐私说明</h3>
-          <p class="d-text">你填写的猫咪信息与答题记录仅保存在本机设备，不上传任何服务器。写真照功能上线后，将在上传照片前另行征得同意。</p>
-        </div>
-        <div class="d-sec">
-          <h3><span class="d-tab">函</span>联系与反馈</h3>
-          <p class="d-text">有想法或发现 bug？欢迎来函，帮喵格研究所变得更好。</p>
-        </div>
-      </section>
-      <footer class="foot">喵格研究所 v2 · CONCEPT</footer>
     </div>
   </div>
 
@@ -374,7 +356,6 @@
   <nav class="tabbar" id="tabbar">
     <button class="tab-btn active" data-view="landing"><span class="tab-icon">🐾</span>建档大厅</button>
     <button class="tab-btn" data-view="archive"><span class="tab-icon">🗂</span>档案柜</button>
-    <button class="tab-btn" data-view="mine"><span class="tab-icon">🪪</span>我的</button>
   </nav>
 
   <!-- 档案简况弹窗 -->
@@ -382,28 +363,42 @@
     <div class="modal-inner" id="modal-inner"></div>
   </div>
 
-  <!-- 分享档案照弹窗 -->
+  <!-- 分享档案弹窗 -->
   <div class="modal" id="share-modal">
     <div class="modal-inner share-inner">
       <button class="modal-close" id="share-close">✕</button>
-      <div class="dict-title" style="text-align:center;margin-bottom:10px">分享档案照</div>
+      <div class="dict-title" style="text-align:center;margin-bottom:10px">分享档案</div>
       <div class="share-canvas-wrap"><canvas id="share-canvas"></canvas></div>
       <div class="share-btns">
         <button class="stamp-btn small" id="btn-save-share">保存档案照</button>
-        <button class="stamp-btn small alt" id="btn-upgrade-share">升级档案照</button>
       </div>
-      <div class="upgrade-strip" id="upgrade-strip">
-        <div class="us-item">
-          <div class="us-thumb now" id="us-now"></div>
-          <span>现在 · 简笔画</span>
-        </div>
-        <div class="us-arrow">➜</div>
-        <div class="us-item">
-          <div class="us-thumb pro" id="us-pro"></div>
-          <span>升级 · AI 写真</span>
-        </div>
+      <p class="tiny center" id="share-hint">解锁深度档案，可使用专属档案照</p>
+    </div>
+  </div>
+
+  <!-- 档案照上传弹窗（点击档案照 / 写真板块弹出，随状态切内容） -->
+  <div class="modal" id="upload-modal">
+    <div class="modal-inner upload-inner">
+      <button class="modal-close" id="upload-close">✕</button>
+      <div class="dict-title" style="text-align:center;margin-bottom:12px">专属档案照&写真照</div>
+      <div class="upload-photo" id="upload-photo"></div>
+      <p class="upload-desc" id="upload-desc"></p>
+      <p class="upload-note" id="upload-note"></p>
+      <button class="stamp-btn small" id="btn-upload-cta"></button>
+      <input type="file" id="upload-file" accept="image/*" hidden>
+    </div>
+  </div>
+
+  <!-- 《隐私协议》弹窗（H5 事实版：全文只读 / 建档前简要确认） -->
+  <div class="modal" id="policy-modal">
+    <div class="modal-inner policy-inner">
+      <button class="modal-close" id="policy-close">✕</button>
+      <div class="pp-head">
+        <div class="pp-title">隐私协议</div>
+        <div class="pp-sub" id="policy-sub">PRIVACY · 建档前请知悉</div>
       </div>
-      <p class="tiny center" id="share-tip">升级：根据 <b id="share-cat-name"></b> 的照片，AI 生成专属人格写真照，并解锁深度档案</p>
+      <div id="policy-body"></div>
+      <button class="stamp-btn small" id="policy-agree"></button>
     </div>
   </div>
 
