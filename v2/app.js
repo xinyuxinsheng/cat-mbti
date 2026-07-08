@@ -530,9 +530,10 @@
     const show = paid ? entries : entries.slice(0, 2);
     document.getElementById('dict-entries').innerHTML = show.map((e, i) => `
       <div class="dict-entry${!paid && i === 1 ? ' faded' : ''}">
-        <div class="de-b">▸ 观察到的行为：${e.behavior}</div>
-        <div class="de-t">档案注解：${e.note}</div>
-        ${(!paid && i === 1) ? '' : sciNote(e.science, e.ref)}
+        <div class="de-b">▸ ${e.behavior}</div>
+        ${(!paid && i === 1)
+          ? '<div class="de-t">完整解读与科学注解，解锁后展开</div>'
+          : sciNote(e.science, e.ref)}
       </div>`).join('');
 
   }
