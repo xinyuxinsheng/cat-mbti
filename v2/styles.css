@@ -1950,7 +1950,7 @@ body {
   text-align: center;
 }
 .pp-overlay-t { color: var(--paper); font-size: 12px; letter-spacing: 1px; }
-.pp-shot-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pp-shot-img, .pp-sample-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pp-ai-tag {
   position: absolute;
   left: 6px; bottom: 6px;

@@ -433,8 +433,9 @@
       foot.style.display = 'none';
       row.onclick = null;
     } else {
-      // locked / empty：半透明提示占位
-      frame.innerHTML = `<div class="pp-sample16"><div class="pp-overlay"><span class="pp-overlay-t">上传照片生成猫咪写真</span></div></div>`;
+      // locked / empty：按型格展示写真样例（16 型专属，对齐小程序 portraitSampleOf）+ 半透明提示占位
+      const pcode = (resultType && resultType.code || '').toLowerCase();
+      frame.innerHTML = `<div class="pp-sample16"><img class="pp-sample-img" src="portraits/${pcode}.jpg" alt="${esc((resultType && resultType.name) || '')}写真样例"><div class="pp-overlay"><span class="pp-overlay-t">上传照片生成猫咪写真</span></div></div>`;
       foot.style.display = '';
       foot.textContent = state === 'locked'
         ? '解密档案后可生成专属头像和写真照'
