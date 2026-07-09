@@ -86,8 +86,6 @@
   const PRIVACY_POLICY_TEXT = `# 喵格测试 · 演示站隐私说明
 
 运营主体：${PRIVACY_SUBJECT}
-客服邮箱：${PRIVACY_CONTACT}
-客服热线：${PRIVACY_HOTLINE}
 
 ## 关于本站
 
