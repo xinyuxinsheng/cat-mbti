@@ -76,7 +76,6 @@
   // ============================================================
   const PRIVACY_SUBJECT = '杭州心语心声科技有限公司';
   const PRIVACY_CONTACT = '1041063767@qq.com';
-  const PRIVACY_HOTLINE = '18260037072';
   const PRIVACY_HIGHLIGHTS = [
     { icon: '💻', title: '仅存本地浏览器', text: '猫咪信息、答题结果、已解锁状态都只保存在你当前浏览器（localStorage），不上传任何服务器。' },
     { icon: '🖼️', title: '照片不离开设备', text: '上传的猫咪照片仅在本机用于生成演示头像与写真，不会上传、不会外传。' },
@@ -109,8 +108,7 @@
 ## 联系我们
 
 · 主体名称：${PRIVACY_SUBJECT}
-· 邮箱：${PRIVACY_CONTACT}
-· 客服热线：${PRIVACY_HOTLINE}`;
+· 邮箱：${PRIVACY_CONTACT}`;
 
   // --- 付费内容库拼装引擎（内容见 content.js，规则见 docs/content/assembly-rules.md） ---
 
@@ -1415,7 +1413,6 @@
     } else { showToast('复制失败，请手动记录'); }
   }
   document.getElementById('footlink-email').addEventListener('click', () => copyText(PRIVACY_CONTACT, '客服邮箱'));
-  document.getElementById('footlink-hotline').addEventListener('click', () => copyText(PRIVACY_HOTLINE, '客服热线'));
 
   showView('landing');
 })();
