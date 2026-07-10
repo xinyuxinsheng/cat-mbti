@@ -1048,7 +1048,7 @@
   }
   document.getElementById('btn-net-share').addEventListener('click', copyInvite);
 
-  function renderCompare(ca, cb) {
+  function renderCompare(ca, cb, openDetail = false) {
     const pair = getPairing(ca.code, esc(ca.name), cb.code, esc(cb.name));
     const dims = [
       ['社交性', 0],
@@ -1103,15 +1103,19 @@
       const pPick = [...pCond, ...pAlw].slice(0, 4);
       const peaceBlocks = pPick.map(x => contentBlock('🕊 ' + x.title, x.text, x.science, x.ref)).join('');
 
+      // 长内容默认收起（对齐小程序 2026-07-10：展开太长太占地方；刚付费自动展开）
       unlockedBody = `<div class="cr-locked unlocked-box">
           <div class="dict-title">🔓 深度解读 · 已开通</div>
           <div class="cr-dims">${dimRows}</div>
-          <div class="dict-title" style="margin-top:16px">📖 维度对比详解</div>
-          ${dimBlocks}
-          <div class="dict-title" style="margin-top:16px">⚡ 冲突预警</div>
-          ${conflictBlocks}
-          <div class="dict-title" style="margin-top:16px">🕊 和平共处指南</div>
-          ${peaceBlocks}
+          <div id="cmp-detail" style="display:none">
+            <div class="dict-title" style="margin-top:16px">📖 维度对比详解</div>
+            ${dimBlocks}
+            <div class="dict-title" style="margin-top:16px">⚡ 冲突预警</div>
+            ${conflictBlocks}
+            <div class="dict-title" style="margin-top:16px">🕊 和平共处指南</div>
+            ${peaceBlocks}
+          </div>
+          <div class="fold-toggle" id="cmp-fold">展开完整解读 ▾</div>
           <p class="tiny center unlock-done">已开通 · 无限次对比 ✓</p>
         </div>`;
     }
@@ -1136,7 +1140,17 @@
       document.getElementById('btn-script-unlock').addEventListener('click', () => {
         localStorage.setItem('meow_cmp_unlocked', '1');
         showToast('支付成功（演示模式）· 深度对比已开通 🔓');
-        renderCompare(ca, cb);
+        renderCompare(ca, cb, true); // 刚付费 → 自动展开
+      });
+    } else {
+      // 折叠开关（默认收起；每次重新测算复位为收起，对齐小程序进页复位）
+      const detail = document.getElementById('cmp-detail');
+      const fold = document.getElementById('cmp-fold');
+      if (openDetail) { detail.style.display = 'block'; fold.textContent = '收起完整解读 ▴'; }
+      fold.addEventListener('click', () => {
+        const open = detail.style.display !== 'none';
+        detail.style.display = open ? 'none' : 'block';
+        fold.textContent = open ? '展开完整解读 ▾' : '收起完整解读 ▴';
       });
     }
   }
@@ -1175,7 +1189,8 @@
         `<option value="${c}">${t.name}（${c}）</option>`).join('')}</optgroup>`;
   }
 
-  function renderHumanCat() {
+  function renderHumanCat(openDetail = false) {
+    openDetail = openDetail === true; // 直接作 click 回调时首参是 Event，须显式判 true
     const h = document.getElementById('hc-human').value;
     const c = document.getElementById('hc-cat').value;
     if (!h) { showToast('先选择你自己的 MBTI 🧑'); return; }
@@ -1209,19 +1224,23 @@
       const bullets = arr => `<ul class="care-list">${arr.map(x => `<li>▪ ${x.tip}${refTag(x.ref)}</li>`).join('')}</ul>`;
       const weekly = (HC_CONTENT.weekly || []).filter(x => evalWhenOnce(x.when, h, c)).slice(0, 2);
 
+      // 长内容默认收起（对齐小程序 2026-07-10：展开太长太占地方；刚付费自动展开）
       body = `
         <div class="cr-locked unlocked-box">
           <div class="dict-title">🔓 完整适配解析 · 已解锁</div>
-          <div class="dict-title" style="margin-top:12px">📖 四维关系拆解</div>
-          ${dimBlocks}
-          <div class="dict-title" style="margin-top:16px">👑 谁在驯服谁</div>
-          ${powerBlocks}
-          <div class="dict-title" style="margin-top:16px">💣 雷区清单</div>
-          ${bullets(gather(HC_CONTENT.mines))}
-          <div class="dict-title" style="margin-top:16px">🍖 讨好攻略</div>
-          ${bullets(gather(HC_CONTENT.please))}
-          ${weekly.length ? `<div class="dict-title" style="margin-top:16px">📅 一周名场面预测</div>` +
-            weekly.map(w => `<p class="weekly-line">${w.text}</p>`).join('') : ''}
+          <div id="hc-detail" style="display:none">
+            <div class="dict-title" style="margin-top:12px">📖 四维关系拆解</div>
+            ${dimBlocks}
+            <div class="dict-title" style="margin-top:16px">👑 谁在驯服谁</div>
+            ${powerBlocks}
+            <div class="dict-title" style="margin-top:16px">💣 雷区清单</div>
+            ${bullets(gather(HC_CONTENT.mines))}
+            <div class="dict-title" style="margin-top:16px">🍖 讨好攻略</div>
+            ${bullets(gather(HC_CONTENT.please))}
+            ${weekly.length ? `<div class="dict-title" style="margin-top:16px">📅 一周名场面预测</div>` +
+              weekly.map(w => `<p class="weekly-line">${w.text}</p>`).join('') : ''}
+          </div>
+          <div class="fold-toggle" id="hc-fold">展开完整解析 ▾</div>
           <p class="tiny center unlock-done">已解锁 · 任意人猫组合可查 ✓</p>
         </div>`;
     } else {
@@ -1243,7 +1262,17 @@
       document.getElementById('btn-hc-unlock').addEventListener('click', () => {
         localStorage.setItem('meow_hc_unlocked', '1');
         showToast('支付成功（演示模式）· 完整解析已解锁 🔓');
-        renderHumanCat();
+        renderHumanCat(true); // 刚付费 → 自动展开
+      });
+    } else {
+      // 折叠开关（默认收起；每次重新测算复位为收起，对齐小程序进页复位）
+      const detail = document.getElementById('hc-detail');
+      const fold = document.getElementById('hc-fold');
+      if (openDetail) { detail.style.display = 'block'; fold.textContent = '收起完整解析 ▴'; }
+      fold.addEventListener('click', () => {
+        const open = detail.style.display !== 'none';
+        detail.style.display = open ? 'none' : 'block';
+        fold.textContent = open ? '展开完整解析 ▾' : '收起完整解析 ▴';
       });
     }
   }
