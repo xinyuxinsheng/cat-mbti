@@ -1410,8 +1410,9 @@ body {
 
 /* 红黑榜 */
 .rb-grid {
+  /* 2026-07-10 用户修订：左右两列改上下结构，字体对齐《应对宝典》条目（13.5px/1.7） */
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 10px;
   margin-bottom: 6px;
 }
@@ -1422,7 +1423,7 @@ body {
 }
 .rb h5 {
   font-family: var(--font-head);
-  font-size: 13px;
+  font-size: 13.5px;
   letter-spacing: 1px;
   margin-bottom: 8px;
 }
@@ -1430,7 +1431,7 @@ body {
 .rb.black h5 { color: var(--red); }
 .rb ul { list-style: none; }
 .rb li {
-  font-size: 12.5px;
+  font-size: 13.5px;
   line-height: 1.7;
   color: var(--ink);
   margin-bottom: 6px;
@@ -1441,7 +1442,7 @@ body {
 /* 喂养建议 / 解读列表 */
 .care-list { list-style: none; }
 .care-list li {
-  font-size: 13px;
+  font-size: 13.5px;
   line-height: 1.8;
   color: var(--ink);
   margin-bottom: 6px;

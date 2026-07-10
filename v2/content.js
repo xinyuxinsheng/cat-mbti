@@ -287,7 +287,7 @@ const DEEP_CONTENT = {
     ]
   },
   "ESFJ": {
-    "name": "王子猫",
+    "name": "贵族猫",
     "faction": "SJ实干派",
     "dictionary": [
       {
