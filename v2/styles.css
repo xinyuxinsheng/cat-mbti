@@ -2037,3 +2037,20 @@ body {
 }
 .fold-toggle:hover { text-decoration: underline; text-underline-offset: 3px; }
 
+/* 付费解析折叠预览（2026-07-10）：收起态露出开头正文 + 底部渐隐到文件纸底色 */
+.detail-peek {
+  max-height: 180px;
+  overflow: hidden;
+  position: relative;
+}
+.detail-peek::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 70px;
+  background: linear-gradient(rgba(251, 244, 226, 0), var(--card));
+  pointer-events: none;
+}
+.detail-peek.open { max-height: none; }
+.detail-peek.open::after { display: none; }
+

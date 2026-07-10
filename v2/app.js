@@ -52,10 +52,11 @@
     if (rec.photoStatus === 'done') return 'done';
     return 'empty';
   }
-  // 档案照三态徽章（base 未升级 / making 升级中 / done 已升级；失败归 base）
+  // 档案照状态徽章（2026-07-10 对齐小程序：已付费未上传=未制作；locked 才是未升级）
   function photoChip(state) {
-    if (state === 'making') return { label: '升级中', tone: 'making' };
+    if (state === 'making') return { label: '制作中', tone: 'making' };
     if (state === 'done') return { label: '已升级', tone: 'done' };
+    if (state === 'empty' || state === 'failed') return { label: '未制作', tone: 'base' };
     return { label: '未升级', tone: 'base' };
   }
   // 上传弹窗文案（随状态）
@@ -1107,7 +1108,7 @@
       unlockedBody = `<div class="cr-locked unlocked-box">
           <div class="dict-title">🔓 深度解读 · 已开通</div>
           <div class="cr-dims">${dimRows}</div>
-          <div id="cmp-detail" style="display:none">
+          <div id="cmp-detail" class="detail-peek">
             <div class="dict-title" style="margin-top:16px">📖 维度对比详解</div>
             ${dimBlocks}
             <div class="dict-title" style="margin-top:16px">⚡ 冲突预警</div>
@@ -1143,14 +1144,13 @@
         renderCompare(ca, cb, true); // 刚付费 → 自动展开
       });
     } else {
-      // 折叠开关（默认收起；每次重新测算复位为收起，对齐小程序进页复位）
+      // 折叠开关（2026-07-10 改露头+渐隐：收起态露出开头正文，全藏时展开按钮易被忽略）
       const detail = document.getElementById('cmp-detail');
       const fold = document.getElementById('cmp-fold');
-      if (openDetail) { detail.style.display = 'block'; fold.textContent = '收起完整解读 ▴'; }
+      if (openDetail) { detail.classList.add('open'); fold.textContent = '收起完整解读 ▴'; }
       fold.addEventListener('click', () => {
-        const open = detail.style.display !== 'none';
-        detail.style.display = open ? 'none' : 'block';
-        fold.textContent = open ? '展开完整解读 ▾' : '收起完整解读 ▴';
+        const open = detail.classList.toggle('open');
+        fold.textContent = open ? '收起完整解读 ▴' : '展开完整解读 ▾';
       });
     }
   }
@@ -1228,7 +1228,7 @@
       body = `
         <div class="cr-locked unlocked-box">
           <div class="dict-title">🔓 完整适配解析 · 已解锁</div>
-          <div id="hc-detail" style="display:none">
+          <div id="hc-detail" class="detail-peek">
             <div class="dict-title" style="margin-top:12px">📖 四维关系拆解</div>
             ${dimBlocks}
             <div class="dict-title" style="margin-top:16px">👑 谁在驯服谁</div>
@@ -1265,14 +1265,13 @@
         renderHumanCat(true); // 刚付费 → 自动展开
       });
     } else {
-      // 折叠开关（默认收起；每次重新测算复位为收起，对齐小程序进页复位）
+      // 折叠开关（2026-07-10 改露头+渐隐，同两猫对比）
       const detail = document.getElementById('hc-detail');
       const fold = document.getElementById('hc-fold');
-      if (openDetail) { detail.style.display = 'block'; fold.textContent = '收起完整解析 ▴'; }
+      if (openDetail) { detail.classList.add('open'); fold.textContent = '收起完整解析 ▴'; }
       fold.addEventListener('click', () => {
-        const open = detail.style.display !== 'none';
-        detail.style.display = open ? 'none' : 'block';
-        fold.textContent = open ? '展开完整解析 ▾' : '收起完整解析 ▴';
+        const open = detail.classList.toggle('open');
+        fold.textContent = open ? '收起完整解析 ▴' : '展开完整解析 ▾';
       });
     }
   }
