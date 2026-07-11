@@ -52,21 +52,21 @@
     if (rec.photoStatus === 'done') return 'done';
     return 'empty';
   }
-  // 档案照状态徽章（2026-07-10 对齐小程序：已付费未上传=未制作；locked 才是未升级）
+  // 写真状态徽章（2026-07-11 对齐小程序：徽章描述写真进度，档案照本身不再升级）
   function photoChip(state) {
     if (state === 'making') return { label: '制作中', tone: 'making' };
-    if (state === 'done') return { label: '已升级', tone: 'done' };
+    if (state === 'done') return { label: '已冲印', tone: 'done' };
     if (state === 'empty' || state === 'failed') return { label: '未制作', tone: 'base' };
-    return { label: '未升级', tone: 'base' };
+    return { label: '未解锁', tone: 'base' };
   }
   // 上传弹窗文案（随状态）
   function photoModalCopy(state) {
     switch (state) {
-      case 'locked': return { desc: '解密深度档案后，可上传爱猫照片，AI 生成专属档案照与 MBTI 写真', cta: '解密档案', note: '' };
-      case 'empty': return { desc: '上传爱猫照片，AI 将生成专属档案照与 MBTI 写真', cta: '上传照片', note: '' };
-      case 'making': return { desc: 'AI 正在生成专属档案照与写真，稍候片刻…', cta: '生成中…', note: '' };
-      case 'done': return { desc: '专属档案照已定型，永久归入本猫档案', cta: '查看写真', note: '每只猫的档案照仅定型一次，不可重新生成' };
-      default: return { desc: '上传爱猫照片，AI 将生成专属档案照与 MBTI 写真', cta: '上传照片', note: '' };
+      case 'locked': return { desc: '解密深度档案后，可上传爱猫照片，AI 生成本猫专属 MBTI 写真照', cta: '解密档案', note: '' };
+      case 'empty': return { desc: '上传爱猫照片，AI 将生成本猫专属 MBTI 写真照', cta: '上传照片', note: '' };
+      case 'making': return { desc: 'AI 正在冲印专属写真，稍候片刻…', cta: '生成中…', note: '' };
+      case 'done': return { desc: '专属写真已定型，永久归入本猫档案', cta: '查看写真', note: '每只猫的写真仅定型一次，不可重新生成' };
+      default: return { desc: '上传爱猫照片，AI 将生成本猫专属 MBTI 写真照', cta: '上传照片', note: '' };
     }
   }
 
@@ -79,7 +79,7 @@
   const PRIVACY_CONTACT = '1041063767@qq.com';
   const PRIVACY_HIGHLIGHTS = [
     { icon: '💻', title: '仅存本地浏览器', text: '猫咪信息、答题结果、已解锁状态都只保存在你当前浏览器（localStorage），不上传任何服务器。' },
-    { icon: '🖼️', title: '照片不离开设备', text: '上传的猫咪照片仅在本机用于生成演示头像与写真，不会上传、不会外传。' },
+    { icon: '🖼️', title: '照片不离开设备', text: '上传的猫咪照片仅在本机用于生成演示写真，不会上传、不会外传。' },
     { icon: '🎭', title: '付费为演示模拟', text: '本站是纯前端演示，"付费解锁"为点击即解锁的模拟，不产生任何真实扣费。' },
     { icon: '🗑️', title: '清除即删除', text: '清除本浏览器数据（或更换设备 / 浏览器）即彻底删除全部档案，无需联系客服。' },
   ];
@@ -94,8 +94,8 @@
 ## 简要条款
 
 1. 仅存本地：你填写的猫咪昵称、品种花色、24 题答题结果、以及已解锁状态，都只保存在你当前浏览器的本地存储（localStorage），不会上传到任何服务器。
-2. 照片不离开设备：制作演示头像与写真时上传的猫咪照片，仅在你的设备本地读取处理（浏览器 FileReader），不上传、不外传，刷新或关闭页面即释放。
-3. 付费为演示模拟：本站的"解密档案""升级档案照"等付费动作均为点击即解锁的演示模拟，不接入任何支付，不会产生真实扣费。
+2. 照片不离开设备：制作演示写真时上传的猫咪照片，仅在你的设备本地读取处理（浏览器 FileReader），不上传、不外传，刷新或关闭页面即释放。
+3. 付费为演示模拟：本站的"解密档案""生成写真"等付费动作均为点击即解锁的演示模拟，不接入任何支付，不会产生真实扣费。
 4. 无第三方收集：本站不索取通讯录、位置、麦克风、摄像头等权限，不做用户画像与广告推送。（页面字体等静态资源由公共 CDN 提供，属常规网络请求。）
 
 ## 数据的删除
@@ -398,17 +398,12 @@
     return loadFiles().find(r => r.id === currentRecId) || null;
   }
 
-  // 猫格证档案照三态徽章 + 头像（AI 照 or 简笔画）
+  // 猫格证档案照(2026-07-11 拍板:一律 16 型预存头像,不再被 AI 图替换) + 写真进度徽章
   function renderIdcPhoto() {
     const rec = currentRec();
     const state = computePhotoState(rec);
-    const shot = rec && rec.photoStatus === 'done' && rec.photoUrl ? rec.photoUrl : '';
     const svgEl = document.getElementById('idc-svg');
-    if (shot) {
-      svgEl.innerHTML = `<img class="cat-pic" src="${shot}" alt="AI 档案照"><span class="idc-ai-badge">AI 生成·演示</span>`;
-    } else {
-      svgEl.innerHTML = catSVG(resultType.code);
-    }
+    svgEl.innerHTML = catSVG(resultType.code);
     const chip = photoChip(state);
     const chipEl = document.getElementById('idc-chip');
     chipEl.textContent = chip.label;
@@ -439,8 +434,8 @@
       frame.innerHTML = `<div class="pp-sample16"><img class="pp-sample-img" src="portraits/${pcode}.jpg" alt="${esc((resultType && resultType.name) || '')}写真样例"><div class="pp-overlay"><span class="pp-overlay-t">上传照片生成猫咪写真</span></div></div>`;
       foot.style.display = '';
       foot.textContent = state === 'locked'
-        ? '解密档案后可生成专属头像和写真照'
-        : '上传照片，即可生成专属头像和写真照';
+        ? '解密档案后可生成专属 AI 写真照'
+        : '上传照片，即可生成专属 AI 写真照';
       row.onclick = openUploadModal;
     }
   }
@@ -588,10 +583,8 @@
   function openUploadModal() {
     const rec = currentRec();
     const state = computePhotoState(rec);
-    const shot = rec && rec.photoStatus === 'done' && rec.photoUrl ? rec.photoUrl : '';
-    document.getElementById('upload-photo').innerHTML = shot
-      ? `<img class="cat-pic" src="${shot}" alt="AI 档案照"><span class="idc-ai-badge">AI 生成·演示</span>`
-      : catSVG(resultType.code);
+    // 2026-07-11 拍板:弹窗方图一律 16 型预存头像(写真在板块内 16:9 展示)
+    document.getElementById('upload-photo').innerHTML = catSVG(resultType.code);
     const copy = photoModalCopy(state);
     document.getElementById('upload-desc').textContent = copy.desc;
     const noteEl = document.getElementById('upload-note');
@@ -628,7 +621,7 @@
       const delay = 2000 + Math.random() * 1000; // 本地必成功
       setTimeout(() => {
         patchRecord(currentRecId, { photoStatus: 'done', photoUrl: dataUrl });
-        showToast('专属档案照生成完成 📸（演示模式）');
+        showToast('专属写真冲印完成 📸（演示模式）');
         renderPetPhoto();
       }, delay);
     };
@@ -723,10 +716,8 @@
 
     const INK = '#2f261c', RED = '#b23a2c', SOFT = '#6f5c44', PAPER = '#f4ead2', CARD = '#fbf4e2', GOLD = '#c79a3b';
     try { await document.fonts.ready; } catch (e) { /* 继续 */ }
-    // 头像取"当前最新可用"：AI 照（白金版）优先，否则像素头像
-    const rec = currentRec();
-    const avatarDone = !!(rec && rec.photoStatus === 'done' && rec.photoUrl);
-    const mainImg = avatarDone ? await loadDataImg(rec.photoUrl) : await loadCatImage(t.code);
+    // 档案照一律 16 型预存像素头像(2026-07-11 拍板:头像不做 AI)
+    const mainImg = await loadCatImage(t.code);
 
     // 牛皮纸底 + 边框
     ctx.fillStyle = PAPER;
@@ -759,15 +750,6 @@
     ctx.strokeStyle = INK; ctx.lineWidth = 3;
     ctx.strokeRect(px, py, ps, ps);
     if (mainImg) drawImageCover(ctx, mainImg, px + 8, py + 8, ps - 16, ps - 16);
-    // AI 照角标（白金版）
-    if (avatarDone) {
-      ctx.fillStyle = 'rgba(23,17,11,0.72)';
-      ctx.fillRect(px + 8, py + ps - 34, 108, 20);
-      ctx.font = '11px "Courier New", monospace';
-      ctx.fillStyle = '#f0d9a8';
-      ctx.textAlign = 'left';
-      ctx.fillText('AI 生成·演示', px + 14, py + ps - 20);
-    }
     ctx.font = '12px "Courier New", monospace';
     ctx.fillStyle = SOFT;
     ctx.textAlign = 'center';
@@ -836,20 +818,6 @@
       ctx.fillText(tag, chx + 11, chy + 19);
       chx += w + 8;
     });
-
-    // 版本章（白金版金黄，仅 AI 照生效时盖；普通版不盖章）
-    if (avatarDone) {
-      ctx.save();
-      ctx.translate(W - 118, 452);
-      ctx.rotate(-0.18);
-      ctx.strokeStyle = GOLD; ctx.lineWidth = 3;
-      rr(ctx, -52, -22, 104, 44, 8); ctx.stroke();
-      ctx.font = '17px "ZCOOL QingKe HuangYou", sans-serif';
-      ctx.fillStyle = GOLD;
-      ctx.textAlign = 'center';
-      ctx.fillText('白金版', 0, 6);
-      ctx.restore();
-    }
 
     // 分隔 + 评定量表
     ctx.textAlign = 'left';
