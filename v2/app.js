@@ -1473,14 +1473,18 @@
   showView('landing');
 })();
 
-// —— 限时倒计时（2026-07-10 付费优化）：24 小时窗口（倒数到今天 24:00），
-//    含百分秒高频跳动制造急迫感（用户定稿），50ms 刷新所有 .cd 标签 ——
+// —— 限时倒计时（2026-07-10 付费优化，用户定稿）：每个用户自首次看到起算完整 24h
+//    （打开即 23:59:5x.xx 开始跳），到期自动重置新一轮；百分秒 50ms 刷新制造急迫感 ——
 (function startCountdown() {
+  const KEY = 'meow_cd_end';
+  const DAY = 24 * 3600 * 1000;
+  let end = Number(localStorage.getItem(KEY)) || 0;
+  const reset = () => { end = Date.now() + DAY; localStorage.setItem(KEY, String(end)); };
+  if (!end || end <= Date.now() || end - Date.now() > DAY) reset();
   const pad = n => String(n).padStart(2, '0');
   const tick = () => {
-    const now = new Date();
-    const end = new Date(now); end.setHours(24, 0, 0, 0);
-    const ms = Math.max(0, end - now);
+    let ms = end - Date.now();
+    if (ms <= 0) { reset(); ms = end - Date.now(); }
     const h = Math.floor(ms / 3600000), m = Math.floor((ms % 3600000) / 60000),
       sec = Math.floor((ms % 60000) / 1000), cs = Math.floor((ms % 1000) / 10);
     const text = `${pad(h)}:${pad(m)}:${pad(sec)}.${pad(cs)}`;
