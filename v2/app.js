@@ -1473,17 +1473,19 @@
   showView('landing');
 })();
 
-// —— 限时倒计时（2026-07-10 付费优化）：倒数到今天 24:00，每秒刷新所有 .cd 标签 ——
+// —— 限时倒计时（2026-07-10 付费优化）：24 小时窗口（倒数到今天 24:00），
+//    含百分秒高频跳动制造急迫感（用户定稿），50ms 刷新所有 .cd 标签 ——
 (function startCountdown() {
   const pad = n => String(n).padStart(2, '0');
   const tick = () => {
     const now = new Date();
     const end = new Date(now); end.setHours(24, 0, 0, 0);
-    let s = Math.max(0, Math.floor((end - now) / 1000));
-    const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
-    const text = `${pad(h)}:${pad(m)}:${pad(sec)}`;
+    const ms = Math.max(0, end - now);
+    const h = Math.floor(ms / 3600000), m = Math.floor((ms % 3600000) / 60000),
+      sec = Math.floor((ms % 60000) / 1000), cs = Math.floor((ms % 1000) / 10);
+    const text = `${pad(h)}:${pad(m)}:${pad(sec)}.${pad(cs)}`;
     document.querySelectorAll('.cd').forEach(el => { el.textContent = text; });
   };
   tick();
-  setInterval(tick, 1000);
+  setInterval(tick, 50);
 })();
