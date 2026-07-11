@@ -500,29 +500,56 @@
     document.getElementById('locked-list').style.display = paid ? 'none' : '';
     document.getElementById('deep-price').style.display = paid ? 'none' : '';
     const unlockBtn = document.getElementById('btn-unlock');
-    unlockBtn.textContent = paid ? '已解密 ✓ 永久有效' : '解密全部档案 🔓';
+    unlockBtn.textContent = paid ? '已解密 ✓ 永久有效' : '解锁 AI 写真 + 深度档案 🔓';
     unlockBtn.classList.toggle('done', paid);
     unlockBtn.disabled = paid;
     // 悬浮栏同步
     const fbDeep = document.getElementById('btn-deep');
-    fbDeep.innerHTML = paid ? '深度档案 · 已解密 ✓' : '解密档案 ¥9.9 <s>¥39.9</s>';
+    fbDeep.innerHTML = paid ? '深度档案 · 已解密 ✓' : 'AI 写真+档案 ¥3.99 <s>¥19.99</s>';
     fbDeep.classList.toggle('done', paid);
 
-    // —— 已解密：追加红黑榜 + 喂养建议（内容库 · 含科学注脚） ——
-    const extra = document.getElementById('deep-extra');
+    // —— 红黑榜前移（2026-07-10 付费优化）：黑榜是恐惧钩子，置于宝典前；
+    //    未付费=部分免费+模糊预览（黑榜免费 2 条、红榜 1 条），宝典降为"红黑榜的注解依据"。
+    const rb = document.getElementById('deep-rb');
+    const li = arr => (arr || []).map(x => `<li>${x.tip}${refTag(x.ref)}</li>`).join('');
+    // 预览版：前 n 条真文字，其余模糊占位（演示站内容本在前端；小程序版须服务端 sample 下发）
+    const liPreview = (arr, freeN) => (arr || []).map((x, i) =>
+      i < freeN ? `<li>${x.tip}</li>` : `<li class="blur">${x.tip}</li>`).join('');
     if (paid) {
-      const li = arr => (arr || []).map(x => `<li>${x.tip}${refTag(x.ref)}</li>`).join('');
-      extra.innerHTML = `
-        <div class="dict-title" style="margin-top:22px">《相处红黑榜》</div>
+      rb.innerHTML = `
+        <div class="dict-title">《相处红黑榜》</div>
         <div class="rb-grid">
           <div class="rb red"><h5>✓ 红榜 · 多做</h5><ul>${li(cc.red)}</ul></div>
           <div class="rb black"><h5>✗ 黑榜 · 别碰</h5><ul>${li(cc.black)}</ul></div>
-        </div>
-        <div class="dict-title" style="margin-top:18px">《喂养环境建议》</div>
-        <ul class="care-list">${(cc.care || []).map(x => `<li>🐾 ${x.tip}${refTag(x.ref)}</li>`).join('')}</ul>`;
+        </div>`;
     } else {
-      extra.innerHTML = '';
+      rb.innerHTML = `
+        <div class="dict-title">《相处红黑榜》抢先看</div>
+        <div class="rb-grid">
+          <div class="rb black"><h5>✗ 黑榜 · 千万别做</h5><ul>${liPreview(cc.black, 2)}</ul></div>
+          <div class="rb red"><h5>✓ 红榜 · 多做</h5><ul>${liPreview(cc.red, 1)}</ul></div>
+        </div>
+        <p class="tiny center rb-lock-tip">🔒 其余 ${Math.max(((cc.red || []).length + (cc.black || []).length) - 3, 0)} 条已加密 · 解锁查看完整红黑榜</p>`;
     }
+    // 喂养建议：仅已付费展示（宝典之后）
+    const extra = document.getElementById('deep-extra');
+    extra.innerHTML = paid
+      ? `<div class="dict-title" style="margin-top:18px">《喂养环境建议》</div>
+        <ul class="care-list">${(cc.care || []).map(x => `<li>🐾 ${x.tip}${refTag(x.ref)}</li>`).join('')}</ul>`
+      : '';
+    // 宝典副注（仅未付费提示宝典与红黑榜的关系）
+    document.getElementById('dict-sub').style.display = paid ? 'none' : '';
+    // —— 付费钩子（鉴定结论/行为记录尾部，2026-07-10）：点击滚动到付费区 ——
+    const hookDesc = document.getElementById('hook-desc');
+    const hookQuotes = document.getElementById('hook-quotes');
+    const rbTotal = (cc.red || []).length + (cc.black || []).length;
+    hookDesc.style.display = paid ? 'none' : '';
+    hookQuotes.style.display = paid ? 'none' : '';
+    hookDesc.innerHTML = `🔒 它为什么这样？《行为应对宝典》已归档 ${entries.length} 条行为注解 → 解密查看`;
+    hookQuotes.innerHTML = `🔒 还有 ${rbTotal} 条相处红黑榜已加密 → 查看`;
+    const gotoLocked = () => document.getElementById('d-locked').scrollIntoView({ behavior: 'smooth' });
+    hookDesc.onclick = gotoLocked;
+    hookQuotes.onclick = gotoLocked;
 
     // 词典：未解密显示前 2 条（第 2 条半加密），已解密全部展开
     const show = paid ? entries : entries.slice(0, 2);
@@ -1131,7 +1158,7 @@
             <li>▪ 冲突预警——什么情况会炸毛、谁是挑事的</li>
             <li>▪ 和平共处指南——资源分配与空间布置建议</li>
           </ul>
-          <div class="price-row"><b>¥9.9</b><s>¥39.9</s><span class="price-tag">限时内测价</span></div>
+          <div class="price-row"><b>¥1.99</b><s>¥9.99</s><span class="price-tag">限时 <b class="cd">--:--:--</b></span></div>
           <button class="stamp-btn small" id="btn-script-unlock">解密两猫关系 🔓</button>
           <p class="tiny center">开通后可无限次对比任意两只猫</p>
         </div>`;
@@ -1252,7 +1279,7 @@
             <li>▪ 雷区清单——千万别对 TA 做的事</li>
             <li>▪ 讨好攻略——对这只猫最有效的示好方式</li>
           </ul>
-          <div class="price-row"><b>¥9.9</b><s>¥29.9</s><span class="price-tag">限时内测价</span></div>
+          <div class="price-row"><b>¥1.99</b><s>¥9.99</s><span class="price-tag">限时 <b class="cd">--:--:--</b></span></div>
           <button class="stamp-btn small" id="btn-hc-unlock">解锁完整解析 🔓</button>
           <p class="tiny center" id="humancat-tip"></p>
         </div>`;
@@ -1444,4 +1471,19 @@
   document.getElementById('footlink-email').addEventListener('click', () => copyText(PRIVACY_CONTACT, '客服邮箱'));
 
   showView('landing');
+})();
+
+// —— 限时倒计时（2026-07-10 付费优化）：倒数到今天 24:00，每秒刷新所有 .cd 标签 ——
+(function startCountdown() {
+  const pad = n => String(n).padStart(2, '0');
+  const tick = () => {
+    const now = new Date();
+    const end = new Date(now); end.setHours(24, 0, 0, 0);
+    let s = Math.max(0, Math.floor((end - now) / 1000));
+    const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+    const text = `${pad(h)}:${pad(m)}:${pad(sec)}`;
+    document.querySelectorAll('.cd').forEach(el => { el.textContent = text; });
+  };
+  tick();
+  setInterval(tick, 1000);
 })();

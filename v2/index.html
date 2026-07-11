@@ -223,10 +223,12 @@
         <div class="d-sec">
           <h3><span class="d-tab">壹</span>鉴定结论</h3>
           <p class="d-text" id="r-desc"></p>
+          <p class="d-hook" id="hook-desc" style="display:none"></p>
         </div>
         <div class="d-sec">
           <h3><span class="d-tab">贰</span>行为记录摘录</h3>
           <ul class="d-quotes" id="r-quotes"></ul>
+          <p class="d-hook" id="hook-quotes" style="display:none"></p>
         </div>
         <div class="d-sec">
           <h3><span class="d-tab">叁</span>MBTI 评定量表</h3>
@@ -251,7 +253,10 @@
 
           <div class="preview-label" id="preview-label">—— 样 章 试 阅 ——</div>
 
+          <div id="deep-rb"></div>
+
           <div class="dict-title" id="dict-title">《行为应对宝典》精选</div>
+          <p class="tiny center" id="dict-sub">完整宝典逐条解释红黑榜背后的行为原理</p>
           <div id="dict-entries"></div>
           <div class="dict-more" id="dict-more">…… 其余 10 条注解已加密，调阅后解密</div>
 
@@ -259,13 +264,13 @@
 
           <div class="locked-divider"></div>
           <ul class="locked-list" id="locked-list">
+            <li>▪ <b>AI 专属写真 + 头像</b>——上传照片，生成本猫专属大片</li>
+            <li>▪ 相处红黑榜——完整 8 条红榜黑榜逐条解密</li>
             <li>▪ 行为应对宝典——完整 12 条档案注解</li>
-            <li>▪ 相处红黑榜——对它的禁忌事项清单</li>
             <li>▪ 喂养环境建议——按喵格布置的生活方案</li>
-            <li>▪ 猫咪写真照——上传照片，AI 生成本猫专属写真与头像</li>
           </ul>
-          <div class="price-row" id="deep-price"><b>¥9.9</b><s>¥39.9</s><span class="price-tag">限时内测价</span></div>
-          <button class="stamp-btn small" id="btn-unlock">解密全部档案 🔓</button>
+          <div class="price-row" id="deep-price"><b>¥3.99</b><s>¥19.99</s><span class="price-tag">限时 <b class="cd">--:--:--</b></span></div>
+          <button class="stamp-btn small" id="btn-unlock">解锁 AI 写真 + 深度档案 🔓</button>
           <p class="tiny center" id="unlock-tip"></p>
         </div>
       </section>
@@ -348,7 +353,7 @@
   <!-- 结果页悬浮操作栏 -->
   <div class="float-bar" id="float-bar" style="display:none">
     <button class="stamp-btn fb" id="btn-share">分享档案</button>
-    <button class="stamp-btn fb alt" id="btn-deep">解密档案 ¥9.9 <s>¥39.9</s></button>
+    <button class="stamp-btn fb alt" id="btn-deep">AI 写真+档案 ¥3.99 <s>¥19.99</s></button>
   </div>
 
   <!-- 底部 Tab -->

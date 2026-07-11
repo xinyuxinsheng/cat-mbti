@@ -2055,3 +2055,26 @@ body {
 .detail-peek.open { max-height: none; }
 .detail-peek.open::after { display: none; }
 
+
+/* —— 付费优化(2026-07-10):钩子行 / 红黑榜模糊预览 / 倒计时 —— */
+.d-hook {
+  margin-top: 10px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+  background: rgba(178, 58, 44, 0.06);
+  border: 1px dashed rgba(178, 58, 44, 0.35);
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+.d-hook:hover { color: var(--red); }
+.rb li.blur {
+  filter: blur(3.5px);
+  user-select: none;
+  pointer-events: none;
+}
+.rb-lock-tip { margin: 6px 0 2px; color: var(--ink-soft); }
+/* 覆盖 .price-row b 的大字样式(27px 红字会撑爆标签且红底隐形) */
+.price-row .price-tag .cd,
+.price-tag .cd { font-family: var(--mono); font-weight: 700; margin: 0 0 0 2px; font-size: 10px; color: #fff; }
